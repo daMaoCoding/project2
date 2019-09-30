@@ -1,0 +1,12 @@
+<@shiro.hasPermission name="/reqPayList/showApiKey">                      <#assign showApiKey=true>                 </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqPayList/ShowIdAndOid">                    <#assign ShowIdAndOid=true>               </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqPayList/ShowMemberID">                    <#assign ShowMemberID=true>               </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqPayList/ShowApiAmount">                   <#assign ShowApiAmount=true>              </@shiro.hasPermission>
+<@shiro.hasPermission name="/tongji/index/">                              <#assign ShowTongJi=true>                 </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqPayList/delete">                          <#assign reqPayListDelete=true>           </@shiro.hasPermission>
+<@shiro.hasPermission name="/resPayList/delete">                          <#assign resPayListDelete=true>           </@shiro.hasPermission>
+<@shiro.hasPermission name="/runTime/payapiurlhealthcheck">               <#assign ShowApiUrlCheck=true>            </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqDaifuList">                               <#assign ShowReqDaifuList=true>               </@shiro.hasPermission>
+<@shiro.hasPermission name="/resDaifuList">                               <#assign ShowResDaifuList=true>               </@shiro.hasPermission>
+<@shiro.hasPermission name="/reqDaifuList/delete">                        <#assign ShowReqDaifuListDelete=true>         </@shiro.hasPermission>
+<@shiro.hasPermission name="/resDaifuList/delete">                        <#assign ShowResDaifuListDelete=true>         </@shiro.hasPermission>

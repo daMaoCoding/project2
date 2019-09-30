@@ -1,0 +1,41 @@
+package dc.pay.business.bibaodaifu;
+
+public class Config {
+
+    // 商户编号
+    public static String MERCHANTID = "BK0000079";
+    
+    // 商户RSA私钥 (长度2048)
+    public static String PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCzUepJuKO/S2g8e/l5FZvXeocWb2MvmfckhRTC4aqm+QF2KXxYKQkiBzNQPHYh9UTW5Ph4KaHnKk5bVh4vXwX128pHNU2qEv9PLtvmZsh0Qsio0XCI//SbFraeCi40nNmK58s2In8ZgF+3ueBOoDU78qxOUhvCJgKK4ytKCSD560xrUVHCeYCmI/iL8JtUOXwHZ+3ffKebser3cT3QhVmcN4u6ciirV+ov3APDRZIF4IIP4YEtbCSbGKaJdAwx+4E2mm0sEt1IbNYUDcO3LAvOg/dDReOVvSw9yy3Tgewtr/fg5MPYuki2r8FmdQgah8yRlIMJdfyDuJh3utUVpkQjAgMBAAECggEAVGZTvYsYFytozj8TtngDN7JF7rtSlc8D0b6JfQg2CAzfMTxpeB0oXUnCTxuGBomocvSmNfhyaZkx9C9eWbGB3qwqUsW13jy+yggmHBV4d7APPdYF/5VpDa3tGgl0ofLJOWXL8Zje9aPEaXclKhyhsauQifR/eCvnunMdpuURDk91lVz8kSWxUnb2kB0QQwM/ifGpgkgj27yVl30EyrNDfQ8pnV7rLe/wTyXx0bHCNKdJBWR1RRV605TOBMdeQW/5EtgSX915WFr0Heak7fBV9IQDmV25Q7CFkqo4gbuz23ZzlwYH5XaNX4AZ3EG5/+hp9pQ5BKwxR3YGLbphhPZ6AQKBgQDbClmYrzmkz0JaEw1Y5W/CjdRmLOCKx2MQWjTfHJRX/1RyPjxIcGHFj/s/m+0LJaz61xsbDa0QuHMjPullR4qeJQM9TTwqjjOorgjHORlCnYUF6iR6FJKA5QyBxnJcjvvGr2ioVkkte673/HUkA05XEkBvShEHvxb9yktz4/z3owKBgQDRk83tpE1mOHII6Pbou7471I9NTei7A887piCqIROhH2E6A5WHa7gHc6hBsRnZ9wMQI0z9ygIrfw7eDkK4xOjfucII0IPtdGP/bhA/9fzX7IKmzx5vjSLTBibmxvaVYvaHKWeIv8DWy0hIPasNsJeKdAGzomc2xFaZIshN9jBJgQKBgEoyn1cRRD2H17obahIK5mjJEoHqAcYA9JW9eNt7GuUUIM7yNglzyCrcMwfBEfMMuCPgadYoM8/OK3JtBTLBoTsg3pANcawYr3ccPOz/cocWRNFUFzcjcN0ouavcRTEFXlRXZuRfFjrKAuMOKcAhPpBQJnOMa2hsWqVtuVFwkWhxAoGBAK8w3vPIZOsOREUueTgTuPJKvX/hoKq0hIdYV/XfsIj/skbMuDJ72VphVEWVxgZudiEHYVTFiQrTK5p0UVIjSIe8wHad16qnoO/lEbBl8PaOvqiyer7FPFcqzVoc+APotixGcEXgBVOImuPIqTTIaeVTFBkVqTIe7kUUzlxdcAABAoGAWSOhst2vlP1PElSkIDJ5R9UNbJdCgryjMWsQR2cJGHA6ZddMTJWPcsUPrZUeWJzG4plsFtTVmAmphwVaXS08gT5tCwnD2D94R+bwjkL00kZMgFBLTQFnxyzLFgUVeOIjCPuAfxbLSku6O54U5LIyL3TvHaC1OE2JwREbww+dvP4=";
+    //币快付平台RSA公钥
+    public static String PLATFORM_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz4RovsOpH2URK+tYbOEiJFRG3xTOfIclbsFHLNCRA8Yu3I0NqahCvgSAIdIWQ9Inok7KOfCjhIJXFVmPmIWO3pawy+7Vt12lG280UcKJuu+kLAHiGkgLWp+VWPwFEDE43zAoK+0lVVvgPxxseJ8sWTBPZWz+ese5Cdqzlgku7jIg7suMV5QRV3ew6WJyAP+aZAfjlAnSnq8DWboHVdZ+LawQ7alZi79h5rcsMS7TX95/FR+ikZvugMhIwxdCv8P53LKgkzLNZYtvGCsacpxglArSZ7MAeSzWyiSC039Bw7rigo67PEXNBGooRxVOYJtD3TMrqwG0Osiq61GOZgiPvQIDAQAB";
+    
+//    // 商户编号
+//    public static String MERCHANTID = "BK0000079";
+//    // 商户RSA私钥 (长度2048)
+//    public static String PRIVATE_KEY = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDazUn355Q4RO6OW6Jo2R/ccsPomncMto6aWESDjnlyVVu/FTGc0PJY16BMnQn/zSW0tgpjItNb9Rvuyo9LYDK5UzklcKjvodcrSf8N+TMVMjQ9qkOFJdi5TUJ29YJHFLEr4Esqwjz+jtAoYyXfcE7mMAk9w3axDInWi8PldXFGgSpZey+OPbXuqDa3s+hv01bhbqS7+NbnZFZVk0517iF1HcKrXf8wgSwWWAlNT1SIizEwzleTFW9XP75DvatoIEYQAV4tWOvCLWKOJlKAWio8MtoaXzkVR5o04HtxxVRAaGBRcXT5GZzlyKVIrTKxJyQWTS6pcW5FH26C0HBYpbGTAgMBAAECggEBAIGIzcS9TguuC4kuCM2H1Yv+SatYXyign3YS0aUM4StmC2Xp1zBep0sfhOA2jGfrfOoqZ6XfRUAIsVvCgej+76i183wN4YXUy3zuVthf8vUWfsUPGuAl0tOJQNMKb/FC98zhAb8ztUaDKArw/8fzRlKSl7YAFTGmGahxoC0lRUWWNERB8k7i+pdotXHp67zRfCAD5l7q6xIfBxbrW3ZfMrTsDOYjqgxIAg+/EEwOeWBgODy/++JEERREAsxoBy1ZARJZclvcZKhV4Rw+t0zpvOFQM6f/I5uZhd74+/5JUjCAanyccukV1PthScQQ0cFDXak4iW5C4/wJ5NehLL9j3rkCgYEA8QLqbpzaefmGFp0j5HmhQm7jOtYAkp6joO2VtjM26WNW4ZanfyLAhswcJ8Kxq5Uh5Ovci8SUi0WT8sVukRFrZ+MeUumJfJ1IsJF0+qZ2U5fq0vJOi+a7mIkf6CEKYVkHm5Gq2k4JAJPHyW3aeTGaq65YzmstXb6xYkBT24TFaH0CgYEA6GjICsbfxuXgYgBmDcZZ7RzhlRjrIUY8/TvLJKMcFXLIqyIuuR1RLMpUKWnzPAzPYuu645q4y10PeouIYkFu2kKk3zhxgbTViVXXR1hZXYUZIPk9XjsHl7O3lRu2X4r3rjkWy0yia/l+msZ6MT8rkH3szAmwpeMPv56GBwERr08CgYBWUHQDH1vDWVDjYm3LUqAlOa9Zj/DukbAKX2xBr3/YAALKkfj0uE55ODpRJxIYYDWeVbZLvCBy7H068ehSPgnYT+e5S/g4T+ALlFxvtBQmhf7Mg4kL45uF2n451TNxf8AQwA+PVWk18rcXdadLxi8dkzgs3QeHTlca1+zwblGAxQKBgQChQfrzR1SD7ILJXR9ylVtWI8D+NAEJ4HN2/iMQ88ALvc4wuBIVTZtCac0Fw0cLNpQ7Pfc57+Qi7xpLXD+wdVhWRwGhBMf1SKUVmqM6FLpFIpHyCB4loO2+u+s4obbkCkea8m+3diAIrV/EQs0MGJnAsy83z81q/OazfWnfuEUuDwKBgFrVKeZnClQvkIQQ44DAW4QJvKfiztSBL9i2WJ0599v7Y3wpe0vAx2br3/dicmE2cW/EDOnoXA6xBL0ylUVnqIhtY11Zp5fg2/FlXO5ygCbOE+8QTcLlFikfuD/cp1JWfPH4OWtbZKlUEuAwsMKl/qSVBOpZ1Is1ebrT5CnkqHKy";
+//    //币快付平台RSA公钥
+//    public static String PLATFORM_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz4RovsOpH2URK+tYbOEiJFRG3xTOfIclbsFHLNCRA8Yu3I0NqahCvgSAIdIWQ9Inok7KOfCjhIJXFVmPmIWO3pawy+7Vt12lG280UcKJuu+kLAHiGkgLWp+VWPwFEDE43zAoK+0lVVvgPxxseJ8sWTBPZWz+ese5Cdqzlgku7jIg7suMV5QRV3ew6WJyAP+aZAfjlAnSnq8DWboHVdZ+LawQ7alZi79h5rcsMS7TX95/FR+ikZvugMhIwxdCv8P53LKgkzLNZYtvGCsacpxglArSZ7MAeSzWyiSC039Bw7rigo67PEXNBGooRxVOYJtD3TMrqwG0Osiq61GOZgiPvQIDAQAB";
+    
+    
+    //版本代码
+    public static String VERSION = "v1";
+
+    //编码
+    public static String CHARSET = "UTF-8";
+
+    //签名类型  目前只支持 RSA
+    public static String SIGNTYPE = "RSA";
+
+    //异步通知地址
+    public static String notifyUrl = "http://127.0.0.1:8080/notifyUrl";
+
+    //提现接口地址
+    public static String API_PAY = "http://www.beekuaipay.cn/gateway/service/pay";
+
+    //支付结果查询地址
+    public static String API_PAY_QUERY = "http://www.beekuaipay.cn/gateway/service/query";
+
+    //查询余额地址
+    public static String API_QUERY_BALANCE = "http://www.beekuaipay.cn/gateway/service/balance";
+}

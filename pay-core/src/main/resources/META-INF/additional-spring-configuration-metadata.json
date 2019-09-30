@@ -1,0 +1,99 @@
+{
+  "properties": [
+    {
+      "name": "spring.datasource.druid.maxActive",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.maxActive."
+    },
+    {
+      "name": "spring.datasource.druid.initialSize",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.initialSize."
+    },
+    {
+      "name": "spring.datasource.druid.filters",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.filters."
+    },
+    {
+      "name": "spring.datasource.druid.maxWait",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.maxWait."
+    },
+    {
+      "name": "spring.datasource.druid.minIdle",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.minIdle."
+    },
+    {
+      "name": "spring.datasource.druid.timeBetweenEvictionRunsMillis",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.timeBetweenEvictionRunsMillis."
+    },
+    {
+      "name": "spring.datasource.druid.minEvictableIdleTimeMillis",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.minEvictableIdleTimeMillis."
+    },
+    {
+      "name": "spring.datasource.druid.validationQuery",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.validationQuery."
+    },
+    {
+      "name": "spring.datasource.druid.testWhileIdle",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.testWhileIdle."
+    },
+    {
+      "name": "spring.datasource.druid.testOnBorrow",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.testOnBorrow."
+    },
+    {
+      "name": "spring.datasource.druid.testOnReturn",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.testOnReturn."
+    },
+    {
+      "name": "spring.datasource.druid.poolPreparedStatements",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.poolPreparedStatements."
+    },
+    {
+      "name": "spring.datasource.druid.maxOpenPreparedStatements",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.druid.maxOpenPreparedStatements."
+    },
+    {
+      "name": "logging.logFileLeve",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    },
+    {
+      "name": "logging.file",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    },
+    {
+      "name": "logging.dbPollName",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    },
+    {
+      "name": "logging.jdbcUrl",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    },   {
+      "name": "logging.username",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    },
+    {
+      "name": "logging.password",
+      "type": "java.lang.String",
+      "description": "A description for 'level'"
+    }
+
+  ]
+}

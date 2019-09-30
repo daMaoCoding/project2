@@ -1,0 +1,45 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: pay-rest-dev
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: html
+    encoding: UTF-8
+    content-type: text/html
+    cache: false
+    mode: HTML
+
+server:
+  port: ${port:8080}  #port: ${random.int[10000,19999]}
+  tomcat:
+    accept-count: 50000
+    max-connections: 50000
+    max-threads: 50000
+    uri-encoding:  UTF-8
+
+management:
+  health.mail.enabled: false
+  security.enabled: false
+
+endpoints:
+  sensitive: true
+  actuator:
+    enabled: true
+    sensitive: true
+  logfile:
+    enabled: true
+  health:
+   sensitive: false
+
+
+management:
+  info:
+    git:
+      mode: full
+---
+#本地环境
+spring:
+    profiles: local
+

@@ -1,0 +1,27 @@
+.jsbridge {
+    height: 29px;
+    width: 50px;
+    background-color: red;
+}
+
+.upimg {
+    height: 200px;
+    width: 200px;
+    background-color: green;
+    margin-bottom: 50px;
+}
+
+.qr-btn{
+    width: 90%;
+    height: 35px;
+    background-color: #157EFB;
+    line-height: 29px;
+    text-align: center;
+    color: #fff;
+    border-radius: 0% 0% 0% 0%;
+    margin-bottom: 5px;
+}
+
+input[node-type=jsbridge]{
+    visibility: hidden;
+}

@@ -1,0 +1,54 @@
+spring:
+  metrics.servo.enabled: false
+  profiles:
+    active: local
+  application:
+    name: pay-rest
+  thymeleaf.mode: HTML5
+  thymeleaf.encoding: UTF-8
+  thymeleaf.content-type: text/html
+  thymeleaf.cache: false
+  cloud:
+    bootstrap.enabled: true
+    loadbalancer.retry.enabled: true  #认参数为true
+    config:
+      name: pay-rest
+      uri: http://localhost:7777/
+      label: master
+      failFast: true
+      discovery:
+        enabled: false
+        serviceId: PAY-CONFIG-SERVER
+  servlet:
+    multipart:
+      max-file-size: 1Mb
+      max-request-size: 1Mb
+      maxFileSize: 1MB
+      maxRequestSize: 1MB
+server:
+  tomcat:
+    accept-count: 2000
+    max-connections: 2500
+    max-threads: 1000
+    max-http-post-size: 10240
+    uri-encoding:  UTF-8
+
+management:
+  health.mail.enabled: false
+  security.enabled: false
+  info.git.mode: full
+endpoints:
+  sensitive: true
+  actuator:
+    enabled: true
+    sensitive: true
+  logfile:
+    enabled: true
+  health:
+   sensitive: false
+logging:
+   file: /opt/logs
+   pattern.level: ERROR
+   level:
+       dc.pay: ERROR
+       org.springframework.web: ERROR

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.pay.RespayListMapper">
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.pay.ResPayList" id="resPayResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="amount" column="amount"/>
+        <result property="channel" column="channel"/>
+        <result property="channelMemberId" column="channelMemberId"/>
+        <result property="timeStmp" column="timeStmp"/>
+        <result property="responsePayParams" column="reqPayInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="responsePayResult" column="requestPayResult" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="reqPayInfo" column="reqPayInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="oid" column="oid"/>
+        <result property="resDbCount" column="resDbCount"/>
+        <result property="resDbResult" column="resDbResult"/>
+        <result property="resDbMsg" column="resDbMsg"/>
+        <result property="serverId" column="serverId"/>
+        <result property="reqPayTimeStmp" column="reqPayTimeStmp"/>
+        <result property="resPayRemoteIp" column="resPayRemoteIp"/>
+    </resultMap>
+<!--
+    &lt;!&ndash; 查询响应支付金额 &ndash;&gt;
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT CONCAT(sum(CAST(res_pay_list_tmp.amount AS Unsigned))) FROM
+        (SELECT DISTINCT order_id ,amount from  res_pay_list
+        <where>
+            <if test="resPayList.orderId != null and resPayList.orderId  != ''">
+                AND order_id = #{resPayList.orderId}
+            </if>
+            <if test="resPayList.channel != null  and resPayList.channel  != ''">
+                AND channel like CONCAT('%',#{resPayList.channel},'%')
+            </if>
+            <if test="resPayList.channelMemberId != null  and resPayList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{resPayList.channelMemberId},'%')
+            </if>
+            <if test="resPayList.result != null and resPayList.result!= 'ALL'    and resPayList.result  != ''">
+                AND result like CONCAT('%',#{resPayList.result},'%')
+            </if>
+            <if test="resPayList.oid != null  and resPayList.oid != 'ALL' and resPayList.oid  != ''">
+                AND oid =#{resPayList.oid}
+            </if>
+        </where>
+        ) AS res_pay_list_tmp
+
+    </select>
+-->
+
+
+    <!-- 查询响应支付金额 -->
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT sum(CAST(amount AS Unsigned)) FROM  res_pay_list
+        <where>
+            <if test="resPayList.orderId != null and resPayList.orderId  != ''">
+                AND order_id = #{resPayList.orderId}
+            </if>
+            <if test="resPayList.channel != null  and resPayList.channel  != ''">
+                AND channel like CONCAT('%',#{resPayList.channel},'%')
+            </if>
+            <if test="resPayList.channelMemberId != null  and resPayList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{resPayList.channelMemberId},'%')
+            </if>
+            <if test="resPayList.result != null and resPayList.result != 'ALL'   and resPayList.result  != ''">
+                AND result like CONCAT('%',#{resPayList.result},'%')
+            </if>
+            <if test="resPayList.oid != null  and resPayList.oid != 'ALL' and resPayList.oid  != ''">
+                AND oid =#{resPayList.oid}
+            </if>
+        </where>
+    </select>
+
+    
+
+</mapper>

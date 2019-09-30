@@ -1,0 +1,27 @@
+server:
+  port: 1111
+spring:
+  application.name: Pay-EUREKASERV-REGISTRY
+eureka:
+  server:
+    enable-self-preservation: false         # 设为false，关闭自我保护
+    eviction-interval-timer-in-ms: 6000000     # 清理间隔（单位毫秒，默认是60*1000）
+  instance:
+    hostname: localhost
+    appname: Pay-EUREKASERV-REGISTRY
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 1      # 续租间隔
+    lease-expiration-duration-in-seconds: 60000000   # 服务失效时间。默认是90秒
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+logging:
+   path: C:/logs
+   logFileLeve: INFO
+   level.org.springframework.web: INFO
+management:
+  info:
+    git:
+      mode: full

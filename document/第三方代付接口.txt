@@ -1,0 +1,471 @@
+1.通道配置的excel表格：
+         增加1列配置，位置：H列，名称：代付通道，值：是/否,（代付的银行名称，和网银的银行名称同列）
+		 
+2.需要db提供2个接口（查询请求代付信息&回调代付结果），默认接口名称如下，如需要更改，请联系我或让运维配置，
+
+3.配置文件增加
+payProps:
+  enableReqPayinfoListToDb: true  #是否启用数据库记录请求支付流水    #(已有)
+  enableResPayinfoListToDb: true  #是否启用数据库记录响应支付流水    #(已有)
+  enableReqDaifuInfoListToDb: true  #是否启用数据库记录请求代付流水  #(需新增)
+  enableResDaiFuInfoListToDb: true  #是否启用数据库记录响应代付流水  #(需新增)         
+  dbInterfaceMap:
+    getReqpayInfo: http://FORE_DATABASE_INTERFACE/userMoney/getPlatformConfig/{orderId}    #(已有)
+    sendPayResult: http://FORE_REST_INTERFACE/userMoney/platformInConfirm                  #(已有)
+    getReqpayInfoHeader: REQUEST_CLIENT=PAY_SERVER                                         #(已有) 
+	(新增如下) (注意：非自营前台/后台调用不一样，后台：DATABASE_INTERFACE，前台：FORE_DATABASE_INTERFACE,如果自营出入款调用，前后台都要改成出入款(crk)的地址可以是http)
+    getReqDaifuInfo:  http://FORE_DATABASE_INTERFACE/userMoney/getPlatformConfigDaifu/{orderId}        #(需新增)查询请求代付信息接口地址
+    sendDaifuResult:  http://FORE_DATABASE_INTERFACE/userMoney/platformInConfirmDaifu                  #(需新增)回调代付结果,通知数据库接口地址
+    getReqDaifuInfoHeader: REQUEST_CLIENT=PAY_SERVER                                              #(需新增)查询请求代付信息接口提交Header内容
+
+
+
+
+
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+===================================================================================================================================
+//测试代付接口，fore 直接调用pay-core
+说明：测试代付，也是真实转账，页面需要提示用户，并且需要商户号内有足够金额可以转账。
+接口地址：http://PAY-CORE/reqDaiFu/testReqDaiFu/
+方法：post/Json
+参数：
+{
+    "api_AMOUNT": "1100", //代付金额，单位分
+    "api_CHANNEL_BANK_NAME": "DUOFU_BANK_WEB_DF_ZGJSYH", //通道标识，见Excel的通道名称
+    "api_CUSTOMER_ACCOUNT": "wangxiaojun",      //用户名，购彩站点注册的用户名或email，唯一标识用户身份不能重复
+	"api_CUSTOMER_BANK_NAME": "中国建设银行",   //银行名称-使用马汀定的意见反馈中有《统一的银行名称》建行，建设银行，中国建行。。。不对的
+    "api_CUSTOMER_BANK_BRANCH": "陕西省分行",    //分行名称，如果没有可为空，不同第三方要求不同。 
+    "api_CUSTOMER_BANK_SUB_BRANCH": "永寿县支行",  //支行名称，如果没有可为空，不同第三方要求不同。 
+    "api_CUSTOMER_BANK_NUMBER": "6217004160022335741",  //银行卡号
+    "api_CUSTOMER_NAME": "王小军",       //收款人姓名
+    "api_Client_IP": "123.123.1.1",      //用户ip
+    "api_KEY": "12919E9D9064..........",   //通道私钥，加密后的，加密参见新增通道
+	"api_PUBLIC_KEY": "",   //公钥必填，需要传递公钥，非必填可为空
+    "api_MEMBERID": "MD63309719",           //通道商户号
+    "api_NOTIFY_URL_PREFIX": "http://66p.huiek888.com:30000",  //回调地址，与请求支付的回调地址相同
+    "api_OID": "100",         //业主OID
+    "api_ORDER_ID": "20190115103226469610",  //代付订单号
+    "api_ORDER_STATE": "1111",                //订单状态，业务系统自己定义的状态，
+    "api_OTHER_PARAM": "通道测试-这是其他参数将会原样返回",   //其他参数，原样返回
+    "api_OrDER_TIME": "1528893062000"    //代付订单时间，时间戳。
+}
+
+响应：
+{
+    "requestDaifuCode": "ERROR",   //总处理结果(SUCCESS,ERROR)，如果错误,下面的错误信息需要展示后台业主弹框。，如果正确，但订单状态非[PAYING],也需要展示用户原因。
+    "requestDaifuOid": "100",   //业主OID
+    "requestDaifuErrorMsg": "{\"respCode\":\"FAILURE\",\"respDesc\":\"商户账户余额不足\"}",   //错误消息
+    "requestDaifuAmount": "1100",  //代付金额
+    "requestDaifuOrderId": "T20190124110040296",  //测试代付订单号
+    "requestDaifuOrderCreateTime": "1528893062000",  //代付订单时间
+    "requestDaifuChannelBankName": "DUOFU_BANK_WEB_DF_ZGJSYH",  //通道
+    "requestDaifuOtherParam": "通道测试-这是其他参数将会原样返回",  //请求时的参数原样返回
+    "requestDaifuTotalTime": "19705",  //总耗时
+    "requestDaifuChannelTime": "19705",  //第三方通道耗时
+    "requestDaifuGetReqDaifuInfoTime": "0",  //获得代付信息耗时
+    "requestDaifuOrderState": "UNKNOW",   //这个重要：代付订单状态，PAYING-支付中，SUCCESS-代付成功，ERROR-代付失败，UNKNOW-未知状态
+    "params": "",
+    "details": ""
+}
+对未知状态的解释：例如网络原因，或第三方收到请求处理超时，这时候订单状态未知，既不能认为是成功的，也不能是失败的。
+测试代付成功：requestDaifuCode=SUCCESS，requestDaifuOrderState=SUCCESS/PAYING  //支付成功，等待支付中...
+测试代付失败：requestDaifuCode=SUCCESS，requestDaifuOrderState=ERROR/UNKNOW，需要返回用户，错误消息，
+测试代付失败：requestDaifuCode=ERROR，requestDaifuOrderState=UNKNOW，需要返回用户，错误消息
+
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+===================================================================================================================================
+//请求代付
+说明： 
+接口地址：http://PAY-CORE/reqDaiFu/{代付订单号}
+方法：get,如果需要传递参数给db,也可以增加 post/Json 参数，但{代付订单号}必须再url中，和请求支付类似。
+参数：
+{
+   "任意参数":"任意值"  //db可能需要oid,ip等信息。
+}
+ 
+响应： 请参考上图测试通道
+
+
+{ //代付请求成功，等待第三方转账
+    "requestDaifuCode": "SUCCESS",
+    "requestDaifuOrderState": "PAYING",
+    "requestDaifuOid": "101",
+    "requestDaifuErrorMsg": "",
+    "requestDaifuAmount": "101",
+    "requestDaifuOrderId": "20190202153712950693",
+    "requestDaifuOrderCreateTime": "1549092622000",
+    "requestDaifuChannelBankName": "DUOFU_BANK_WEB_DF_GSYH",
+    "requestDaifuOtherParam": "this is other param from db reqpayInfo",
+    "requestDaifuTotalTime": "636",
+    "requestDaifuChannelTime": "500",
+    "requestDaifuGetReqDaifuInfoTime": "136",
+    "params": "",
+    "details": ""
+}
+
+
+
+
+{   //代付请求失败，错误消息需要展示，或备注栏填写。
+    "requestDaifuCode": "ERROR",
+	"requestDaifuOrderState": "UNKNOW",  //代付信息是否提交成功未知，有可能第三方收到请求，但是第三方处理超时，这种单子应该允许回调更改状态，例如回调确认转账成功。如果db不允许改，业主会再次出款，导致重复出款。
+    "requestDaifuOid": "100",
+    "requestDaifuErrorMsg": "超时：20秒。。。",
+    "requestDaifuAmount": "5000",
+    "requestDaifuOrderId": "20190124131721868541",
+    "requestDaifuOrderCreateTime": "1548054754000",
+    "requestDaifuChannelBankName": "DUOFU_BANK_WEB_DF_ZGJSYH",
+    "requestDaifuOtherParam": "BILL_INFO_这是其他参数将会原样返回",
+    "requestDaifuTotalTime": "22491",
+    "requestDaifuChannelTime": "19753",
+    "requestDaifuGetReqDaifuInfoTime": "2738",
+    "params": "",
+    "details": ""
+}
+
+{   //代付请求成功，转账成功。
+    "requestDaifuCode": "SUCCESS",
+	"requestDaifuOrderState": "SUCCESS",
+    "requestDaifuOid": "100",
+    "requestDaifuErrorMsg": "",
+    "requestDaifuAmount": "5000",
+    "requestDaifuOrderId": "20190124132243316116",
+    "requestDaifuOrderCreateTime": "1548054754000",
+    "requestDaifuChannelBankName": "DUOFU_BANK_WEB_DF_ZGJSYH",
+    "requestDaifuOtherParam": "BILL_INFO_这是其他参数将会原样返回",
+    "requestDaifuTotalTime": "11125",
+    "requestDaifuChannelTime": "9018",
+    "requestDaifuGetReqDaifuInfoTime": "2107",
+    "params": "",
+    "details": ""
+}
+
+  
+{   //代付请求成功，转账失败。(多常见于查询代付结果的时候)
+    "requestDaifuCode": "SUCCESS",
+	"requestDaifuOrderState": "ERROR",
+    "requestDaifuOid": "100",
+    "requestDaifuErrorMsg": "{\"respCode\":\"FAILURE\",\"respDesc\":\"商户账户余额不足\"}",
+    "requestDaifuAmount": "5000",
+    "requestDaifuOrderId": "20190124133325262539",
+    "requestDaifuOrderCreateTime": "1548054754000",
+    "requestDaifuChannelBankName": "DUOFU_BANK_WEB_DF_ZGJSYH",
+    "requestDaifuOtherParam": "BILL_INFO_这是其他参数将会原样返回",
+    "requestDaifuTotalTime": "4436",
+    "requestDaifuChannelTime": "2819",
+    "requestDaifuGetReqDaifuInfoTime": "1617",
+    "params": "",
+    "details": ""
+}
+
+
+
+
+
+
+
+
+
+
+
+
+===================================================================================================================================
+pay-core,查询DB,获取[代付信息接口]：此接口需db提供
+接口地址：默认使用：http://FORE_DATABASE_INTERFACE/userMoney/getPlatformConfigDaifu/{orderId}  
+                   http://DATABASE_INTERFACE/userMoney/getPlatformConfigDaifu/{orderId}
+方法：get 或 postJson,取决fore 如果调用paycore,如果fore调用代付时候传递参数，则原样见fore post 到pay-core的数据，发到此接口。否则get,请db与fore协商。
+参数：url 中的 {orderId}  必传。
+头信息:上面配置的header,默认使用： "request_client": "PAY_SERVER",
+
+期望db返回结果，类似请求支付查询订单支付信息
+参数说明，参见上面[测试代付]提交给pay-core的参数。
+{
+    "aPI_AMOUNT": "5000",        
+    "aPI_CHANNEL_BANK_NAME": "DUOFU_BANK_WEB_DF_ZGJSYH",
+    "aPI_CUSTOMER_ACCOUNT": "wangxiaojun",
+    "aPI_CUSTOMER_BANK_BRANCH": "陕西省分行",
+    "aPI_CUSTOMER_BANK_NAME": "中国建设银行",
+    "aPI_CUSTOMER_BANK_NUMBER": "6217004160022335741",
+    "aPI_CUSTOMER_BANK_SUB_BRANCH": "永寿县支行",
+    "aPI_CUSTOMER_NAME": "王小军",
+    "aPI_Client_IP": "123.123.123.123",
+    "aPI_KEY": "12919E9D90647E63040F17E67578234......3",  //加密的
+    "aPI_MEMBERID": "MD63309719",
+    "aPI_NOTIFY_URL_PREFIX": "http://66p.nsqmz6812.com:30000",
+    "aPI_OID": "100",
+    "aPI_ORDER_ID": "20190124115526959909",
+    "aPI_ORDER_STATE": "0",   //DB内部订单状态，pay-core记录，无其他用处
+    "aPI_OTHER_PARAM": "这是其他参数将会原样返回",  //这是db要传给fore的参数
+    "aPI_OrDER_TIME": "1548054754000",
+    "aPI_PUBLIC_KEY": ""
+}
+
+注：类似请求支付时候db使用的redis缓存此信息的时间，代付的时候也需要缓存，建议时间2小时，很多银行2小时内到账。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+===================================================================================================================================
+pay-core,调用DB或FORE [代付结果回调] 通知，此接口需要业务系统提供
+接口地址：默认使用：http://FORE_REST_INTERFACE/userMoney/platformInConfirmDaifu     
+方法:post/json 
+头信息：上面配置的header,默认使用："request_client": "PAY_SERVER"
+参数：
+  
+{
+    "responseOrderID": "20190122113634826105"   //代付订单号
+    "responseDaifuCode": "SUCCESS",  //默认只会发送成功的消息，如果有收到ERROR的无需任何处理
+    "responseOrderState": "ERROR",     //这个重要：代付订单状态，PAYING-支付中，SUCCESS-代付成功，ERROR-代付失败或者是取消的，UNKNOW-未知状态(会很少出现长见于第三方回调的数据状态有改变无法正确获取，db无需处理就好)
+    "responseDaifuAmount": "5000",  //代付金额分，会与发送代付请求时一致。 
+    "responseDaifuChannel": "DUOFU_BANK_WEB_DF_ZGJSYH",  //通道名称
+    "responseDaifuErrorMsg": "第三方回调确定转账取消或失败。{\"order_no\":\"20181008165128\",\"notify_type\":\"back_notify\",\"merchant_code\":\"3018687\",\"return_params\":\"\",\"trade_time\":\"1538989431\",\"order_amount\":\"50.00\",\"trade_status\":\"success\",\"paid_amount\":\"50.00\",\"sign\":\"1a980312c256b10274f04e5020df3ff3\",\"trade_no\":\"118100816512990655\",\"order_time\":\"1538988689\"}",
+    "responseDaifuMemberId": "3018687",  //商户号
+    "responseDaifuMsg": "success",  //消息，没什么用
+    "responseDaifuOid": "100",   //业主OID
+    "responseDaifuOrderCreateTime": "1548055923000",  //代付订单创建时间
+    "responseDaifuOtherParam": "这是其他参数将会原样返回", //传递的其他参数
+    "responseDaifuSign": "0B64049055A550A5770206F1C3204321",  //pay-core 与业务系统确认身份的签名，目前没用
+    "responseDaifuTotalTime": 0     //超时时间 
+}
+
+ 
+
+{ //类似如下的回调，说明代付成功。
+    "responseOrderID": "20190123163543174917",
+	"responseDaifuCode": "SUCCESS",    //请求处理成功
+	"responseOrderState": "SUCCESS",    //代付成功
+    "responseDaifuOid": "100",
+    "responseDaifuAmount": "5000",
+    "responseDaifuOrderCreateTime": "1548054754000",
+    "responseDaifuTotalTime": "0",
+    "responseDaifuOtherParam": "BILL_INFO_这是其他参数将会原样返回",
+    "responseDaifuErrorMsg": "",
+    "responseDaifuMemberId": "MD63309719",
+    "responseDaifuSign": "9978169AE5446320BA2A47A451346D71",
+    "responseDaifuChannel": "DUOFU_BANK_WEB_DF_ZGJSYH"
+}
+ 
+
+ 补发说明：默认会按如下时间间隔补发[代付结果通知]3/5/15/15/30/180/180/1800/1800/1800/3600，如果db不需要再发送通知，请返回json {"result":1},和支付回调通知一样。
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+===================================================================================================================================
+
+查询代付  //如果有查询结果(转账取消，或，转账成功。将自动再次回调db确认代付成功或取消。)
+1.接口地址：http://PAY-CORE/reqDaiFu/query/{代付的订单号}
+2.方法： post/get,Json,  并支持post传递任意参数如客户ip等，此参数将同步传递到DB提供的[请求获取代付信息]接口中。
+3.返回如下：json, 注：第三方有可能发送此类通知：第一次通知转账失败了。第二次又通知转账成功了，为了防止重复出款，建议，将转账成功了，设置为不可改。既：已经成功的不能转成失败，已经失败的，可以转成成功的。
+5.pay-core有限制查询第三方超时5秒。
+{
+    "responseDaifuCode": "SUCCESS",          //查询结果成功
+	"responseOrderState": "SUCCESS",         //代付/转账成功
+    "responseOrderID": "20190123142729017100",
+    "responseDaifuErrorMsg": "",
+    "responseDaifuTotalTime": "994",
+    "responseDaifuMsg": "",
+    "responseDaifuChannel": "629",
+    "responseDaifuAmount": "5000",
+    "responseDaifuMemberId": "MD63309719",
+    "responseDaifuOtherParam": "这是来自DB[请求代付信息]的其他参数，用于传递给fore",
+    "responseDaifuOid": "100",
+    "responseDaifuSign": "43454F0A826CFEE31B2AED90D7550393",
+    "responseDaifuOrderCreateTime": "1548054754000",
+    "reqDaifuInfo": ""
+}
+
+
+{
+    "responseDaifuCode": "SUCCESS",     // 查询结果成功
+	"responseOrderState": "ERROR",      // 代付/转账失败，第三方确认转账失败了，或取消了，（下面的错误消息有用，需要展示业主备注栏）
+    "responseOrderID": "20190123143139803745",
+    "responseDaifuErrorMsg": "商户账户余额不足。。或，单笔超过最大限额，或，第三方无此订单号",
+    "responseDaifuTotalTime": "4529",
+    "responseDaifuMsg": "",
+    "responseDaifuChannel": "4380",
+    "responseDaifuAmount": "5000",
+    "responseDaifuMemberId": "MD63309719",
+    "responseDaifuOtherParam": "这是来自DB[请求代付信息]的其他参数，用于传递给fore",
+    "responseDaifuOid": "100",
+    "responseDaifuSign": "FA216345B0466B1066EED6651DC26534",
+    "responseDaifuOrderCreateTime": "1548054754000",
+    "reqDaifuInfo": ""
+}
+
+
+{
+    "responseDaifuCode": "SUCCESS",                //查询结果成功
+    "responseOrderID": "20190123143537868310",
+    "responseOrderState": "PAYING",                //转账中。。
+    "responseDaifuErrorMsg": "",
+    "responseDaifuTotalTime": "1935",
+    "responseDaifuMsg": "",
+    "responseDaifuChannel": "1722",
+    "responseDaifuAmount": "5000",
+    "responseDaifuMemberId": "MD63309719",
+    "responseDaifuOtherParam": "这是来自DB[请求代付信息]的其他参数，用于传递给fore",
+    "responseDaifuOid": "100",
+    "responseDaifuSign": "8D3F1E47AF9DC278F527F21654F2B255",
+    "responseDaifuOrderCreateTime": "1548054754000",
+    "reqDaifuInfo": ""
+}
+
+{
+    "responseDaifuCode": "ERROR",                  //查询结果失败 （下面的错误消息有用，需要展示业主备注栏/或弹框）
+    "responseOrderID": "20190123143851273274",
+    "responseOrderState": "UNKNOW",                //不知道转账成功 还是失败。未查询到结果。(注：没有结果!=转账失败)
+    "responseDaifuErrorMsg": "{\"respCode\":\"FAILURE\",\"respDesc\":\"商户订单号不存在\"}",
+    "responseDaifuTotalTime": "3065",
+    "responseDaifuMsg": "",
+    "responseDaifuChannel": "2920",
+    "responseDaifuAmount": "5000",
+    "responseDaifuMemberId": "MD63309719",
+    "responseDaifuOtherParam": "这是来自DB[请求代付信息]的其他参数，用于传递给fore",
+    "responseDaifuOid": "100",
+    "responseDaifuSign": "A01AD5DC21BA1DDC93676211E57FB807",
+    "responseDaifuOrderCreateTime": "1548054754000",
+    "reqDaifuInfo": ""
+}
+
+
+
+
+
+14:27 2019/1/30
+补：当查询的订单号不存在时候(pay流水表)直接返回订单失败。 当查询不到代付信息，表示db生成的代付订单网络问题没传递过来，订单直接取消。
+{
+    "responseDaifuCode": "SUCCESS",
+    "responseOrderID": "DUOFU_BANK_WEB_DF_ZGJSYH1",
+    "responseOrderState": "ERROR",
+    "responseDaifuErrorMsg": "XC:无此订单号",
+    "responseDaifuTotalTime": "6499",
+    "responseDaifuMsg": "",
+    "responseDaifuChannel": "",
+    "responseDaifuAmount": "",
+    "responseDaifuMemberId": "",
+    "responseDaifuOtherParam": "",
+    "responseDaifuOid": "",
+    "responseDaifuSign": "",
+    "responseDaifuOrderCreateTime": "",
+    "reqDaifuInfo": ""
+}
+
+
+===================================================================================================================================
+代付，查询第三方商户号下余额
+说明：查询第三方商户号下余额
+接口地址：http://PAY-CORE/reqDaiFu/query/balance
+
+方法：post/Json
+参数：
+{
+	"api_OID":"100",    //业主OID
+	"api_CHANNEL_BANK_NAME": "DUOFU",   //第三方ID,唯一标识第三方的，见Excel
+	"api_MEMBERID": "MD63309719",  //商户号
+	"api_KEY": "12919E9D9.....",   //私钥，加密的，如果公钥必填的，下面的公钥也要填写
+	"api_PUBLIC_KEY":"",    //公钥，未加密的
+	"api_OTHER_PARAM":"rest传递的其他参数,原样返回"  //其他参数
+}
+
+
+
+
+响应：
+{
+       "requestDaifuCode": "ERROR",                             //总处理结果
+       "requestDaifuErrorMsg": "系统忙请稍后再试....",           //错误消息
+       "requestDaifuOtherParam": "rest传递的其他参数,原样返回",  //其他参数
+       "requestDaifuChannelId": "DUOFU",                       //第三方id
+       "reqyestDaifuChannelMemberId": "MD63309719",            //商户号
+       "requestDaifuBalance": "0",                             // 余额，单位分
+       "requestDaifuDateTime": "1548753273991"                //当前时间戳
+}
+
+{
+    "requestDaifuCode": "SUCCESS",
+    "requestDaifuBalance": "0",
+    "requestDaifuErrorMsg": "",
+    "requestDaifuOtherParam": "rest传递的其他参数,原样返回",
+    "requestDaifuChannelId": "DUOFU_BANK_WEB_DF_ZGJSYH",
+    "reqyestDaifuChannelMemberId": "MD63309719",
+    "requestDaifuDateTime": "1548754205688"
+}
+
+
+=====================================================================================================
+第三方出款通道操作使用说明
+
+
+
+第1步：
+
+在后台系统管理——系统配置页面列表的“第三方出款”列，开启第三方出款
+
+
+
+第2步：
+
+在后台现金管理——出入款设定——出款通道页面，新增一个第三方出款通道（按照弹窗的要求填写），注意新增出款通道必须要测试通过了才能成功新增第三方出款通道（在新增第三方出款通道弹窗可以测试通道）。
+
+第三方出款通道新增成功后，可以点击页面列表中【资料】按钮弹窗重新测试（有时候使用了一段时间，该第三方出款通道不能用了，有必要重新测试该通道是否正常）
+
+在出款通道管理页面列表操作列可以设定出款手续费、出款规则，查看该出款通道支持哪些银行出款（注：会员的出款银行卡必须是第三方出款通道支持的，才能正常出款）
+
+
+
+第3步：
+
+在出款管理页面列表，选择一条会员出款申请，在操作列中点击【确定第三方出款】按钮，选择一条第三方出款通道出款（系统会筛选出可用的第三方出款通道显示在弹窗中）。
+
+如果第三方支付平台取消了该笔出款，该笔出款就会显示在出款管理——第三方取消出款Tba页面，可以重新走出款流程（可以继续去选择其他第三方出款通道或者选择自出款）
+
+如果第三方支付平台超时没有返回出款结果，该笔出款就会显示在出款管理——第三方出款需人工处理Tab页面，这时需要人工登录第三方支付平台的后台去核实，核实之后，再到我们后台处理

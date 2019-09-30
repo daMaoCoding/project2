@@ -1,0 +1,93 @@
+.mtj.tmp/
+merge.bat
+clean.bat
+ehcache.disk.store.dir
+*/**/channel-excelJson.properties
+*/**/.idea/*
+*/**/*.mdmp
+*.iml
+*.war
+*.ear
+.project
+.settings
+.sonar
+ hs_err_pid*
+*.xls*
+*.class
+*.log
+logs/
+target/
+out/
+/logs
+/doc/
+*/src/test/
+generator/
+payCache/
+classes/
+conf-git-bak
+conf-local-bak
+.idea/inspectionProfiles/
+/.idea/
+*/.idea/*
+.idea
+/*/**/*.iml
+*.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/
+*.iml
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+pay-config-server/.classpath
+pay-core/.classpath
+pay-eureka-serv/.classpath
+pay-rest-dev/.classpath
+pay-rest/.classpath
+.classpath

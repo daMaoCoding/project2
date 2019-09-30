@@ -1,0 +1,148 @@
+body,
+#wrapper_1 {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
+/*解决苹果滚动条卡顿的问题*/
+
+#wrapper_1 {
+    overflow-y: visible!important;
+}
+
+body.login-bg {
+    padding-top: 0px!important;
+}
+
+  .gray {
+      -webkit-filter: grayscale(100%);
+      -moz-filter: grayscale(100%);
+      -ms-filter: grayscale(100%);
+      -o-filter: grayscale(100%);
+      filter: grayscale(100%);
+      filter: gray;
+  }
+#cross {
+    position: relative;
+    top: -40px;
+    right: 10px;
+    width: 30px;
+    left: 70%;
+    height: 30px;
+}
+#cross:after {
+    background-image: url('upload.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    content: '';
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 0px;
+}
+input#authCode {
+    width: 40% !important;
+}
+input#amount {
+    width: 40% !important;
+}
+/*popup*/
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
+    top: 30%;
+}
+
+.popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+.popup .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.popup .close:hover {
+    color: #06D85F;
+}
+
+.popup .content {
+    max-height: 30%;
+    overflow: auto;
+}
+
+.text-center {
+    text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+    .popup {
+        width: 70%;
+    }
+}
+
+.center {
+    text-align: center
+}
+
+
+/*upfile*/
+.jsbridge {
+    height: 29px;
+    width: 50px;
+    background-color: red;
+}
+
+.upimg {
+    height: 200px;
+    width: 200px;
+    background-color: green;
+    margin-bottom: 50px;
+}
+
+.qr-btn{
+    width: 90%;
+    height: 35px;
+    background-color: #157EFB;
+    line-height: 29px;
+    text-align: center;
+    color: #fff;
+    border-radius: 0% 0% 0% 0%;
+    margin-bottom: 5px;
+}
+
+input[node-type=jsbridge]{
+    visibility: hidden;
+}

@@ -1,0 +1,27 @@
+########################################################################################################################
+#[如意支付]-235-699提交如意支付对接银联快捷,银联扫码,qq扫码,qq wap,网银 已开通
+RUYIZHIFU_BANK_WEBWAPAPP_QQ_SM                    = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-QQ
+RUYIZHIFU_BANK_WAP_QQ_SM                          = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-QQ
+RUYIZHIFU_BANK_WEBWAPAPP_YL_SM                    = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-银联
+RUYIZHIFU_BANK_WEBWAPAPP_YL_KJZF                  = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-银联快捷
+RUYIZHIFU_BANK_WEBWAPAPP_WX_SM                    = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-微信
+RUYIZHIFU_BANK_WAP_WX_SM                          = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-微信
+RUYIZHIFU_BANK_WEBWAPAPP_ZFB_SM                   = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-支付宝
+RUYIZHIFU_BANK_WAP_ZFB_SM                         = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-支付宝
+RUYIZHIFU_BANK_WEBWAPAPP_JD_SM                    = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-京东
+RUYIZHIFU_BANK_WAP_JD_SM                          = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-京东
+RUYIZHIFU_BANK_WEB_WY_NYYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国农业银行
+RUYIZHIFU_BANK_WEB_WY_GSYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国工商银行
+RUYIZHIFU_BANK_WEB_WY_JSYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国建设银行
+RUYIZHIFU_BANK_WEB_WY_JTYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-交通银行
+RUYIZHIFU_BANK_WEB_WY_ZGYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国银行
+RUYIZHIFU_BANK_WEB_WY_ZSYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-招商银行
+RUYIZHIFU_BANK_WEB_WY_MSYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国民生银行
+RUYIZHIFU_BANK_WEB_WY_GDYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国光大银行
+RUYIZHIFU_BANK_WEB_WY_XYYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-兴业银行
+RUYIZHIFU_BANK_WEB_WY_YZYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中国邮政储蓄银行
+RUYIZHIFU_BANK_WEB_WY_PAYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-平安银行
+RUYIZHIFU_BANK_WEB_WY_ZXYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-中信银行
+RUYIZHIFU_BANK_WEB_WY_GFYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-广发银行
+RUYIZHIFU_BANK_WEB_WY_HXYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-华夏银行
+RUYIZHIFU_BANK_WEB_WY_PFYH                        = ABCD      |  http://pay.ruyipayment.com/gateway/            | sign  #-上海浦发银行

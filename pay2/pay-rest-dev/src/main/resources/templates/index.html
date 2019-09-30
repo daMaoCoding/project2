@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8" />
+    <title>pay-rest-dev</title>
+</head>
+<body>
+<h2>接收回调-开发工具  </h2>
+<h3 th:text="${T(java.util.Calendar).getInstance().getTime().toLocaleString()}"></h3>
+<h4>提交地址：(Post/Get/Json/Form/XML/....)</h4>
+http://66p.huiek888.com:30000/respPayWeb/XXXX_BANK_WEBWAPAPP_WX_SM/ <br>
+http://66p.nsqmz6812.com:30000/respPayWeb/XXXX_BANK_WEBWAPAPP_WX_SM/ <br>
+
+<hr/>
+
+回调黑名单列表：<a href="cleanBlackIp">清空</a>
+<div th:text="${ T(dc.pay.payrest.PayRestDevConFig).getInstance().getBlackIpList()}"></div>  <br>
+
+<form action="addBlackIp">
+    <input type="text" name="blackIp" /> <input type="submit" value="添加" />
+</form>
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+

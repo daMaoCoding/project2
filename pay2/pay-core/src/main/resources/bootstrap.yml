@@ -1,0 +1,146 @@
+spring:
+  metrics.servo.enabled: false
+  profiles:
+    active: local
+  application:
+    name: pay-core
+  cloud:
+    bootstrap.enabled: true
+    loadbalancer.retry.enabled: true  #认参数为true
+    config:
+      name: pay-core
+      uri: http://localhost:7777/
+      label: master
+      failFast: true
+      discovery:
+        enabled: false
+        serviceId: PAY-CONFIG-SERVER
+  jackson:
+    serialization:
+      indent_output: true
+  cache:
+      type: EHCACHE  #EHCACHE / REDIS
+      ehcache.config: classpath:ehcache.xml
+  mvc:
+      static-path-pattern: /static/**
+      view:
+          prefix: /templates/
+          #suffix: .ftl
+  freemarker:
+      cache: true
+      request-context-attribute: request
+  aop:
+      proxy-target-class: true
+  activemq:
+      broker-url: vm://${random.uuid}?broker.persistent=false&broker.useShutdownHook=false&broker.schedulerSupport=true&broker.useJmx=false
+      in-memory: true
+      non-blocking-redelivery: true
+      packages:
+        trust-all: true
+        trusted: dc.pay
+      pool:
+        enabled: true
+        block-if-full: true
+        block-if-full-timeout: -1
+        create-connection-on-startup: true
+        max-connections: 10
+        idle-timeout: 30000
+        expiry-timeout: 0
+        maximum-active-session-per-connection: 5000
+        reconnect-on-exception: true
+        time-between-expiration-check: -1
+        use-anonymous-producers: true
+  jms:
+    listener:
+      acknowledge-mode: auto
+      auto-startup: true
+      concurrency: 50
+      max-concurrency: 500
+    pub-sub-domain: false
+    template:
+      default-destination:
+      delivery-mode: non_persistent
+      priority: 100
+      qos-enabled: true
+      receive-timeout: 1000
+      time-to-live: 36000
+  http:
+    converters:
+      preferred-json-mapper: fastjson  #有待测试
+    multipart:
+      max-request-size: 1MB #最大请求大小
+      max-file-size: 1MB #最大文件大小
+  devtools:
+    restart:
+      enabled: false #是否开启开发者工具（true/false）
+      exclude: static/**,templates/**,WEB-INF/view/**
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+ribbon:
+  ServerListRefreshInterval: 5000
+  ConnectTimeout: 10000
+  ReadTimeout: 60000
+server:
+  tomcat:
+    accept-count: 2000
+    max-connections: 2500
+    max-threads: 1000
+    uri-encoding:  UTF-8
+management:
+  health.mail.enabled: false
+  security.enabled: false
+  info.git.mode: full
+endpoints:
+  sensitive: true
+  actuator:
+    enabled: true
+    sensitive: true
+  logfile:
+    enabled: true
+  health:
+   sensitive: false
+mybatis:
+    type-aliases-package: dc.pay.entity
+    mapper-locations: classpath*:/**/*Mapper.xml
+    config-locations: classpath:mybatis-config.xml
+    type-handlers-package: dc.pay.utils.mybatis.typeHandler
+mapper:
+    mappers:
+        - dc.pay.base.BaseMapper
+    not-empty: false
+    identity: MYSQL
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+logging:
+   file: /opt/logs/
+   pattern.level: ERROR
+   level:
+     dc.pay: ERROR
+     org.apache.activemq: ERROR
+     org.springframework.web: ERROR
+jasypt.encryptor.password: 3556239829
+payAdmin:
+  kaptcha-open: false #是否开启登录时验证码 (true/false)
+  session-open: false #是否开启session超时验证（受影响的类SessionTimeoutInterceptor） (true/false)
+  #file-upload-path: d:/tmp  #文件上传目录(不配置的话为java.io.tmpdir目录)
+  muti-datasource-open: false #是否开启多数据源(true/false)
+  spring-session-open: false #是否开启spring session,如果是多机环境需要开启(true/false)
+  session-invalidate-time: 28800 #session失效时间(只在单机环境下生效，多机环境在SpringSessionConfig类中配置) 单位：秒
+  session-validation-interval: 28800 #多久检测一次失效的session(只在单机环境下生效) 单位：秒
+beetl:
+  delimiter-statement-start: \@   #开始结束标签(yaml不允许@开头)
+  delimiter-statement-end: null
+  resource-tagroot: common/tags   #自定义标签文件Root目录和后缀
+  resource-tagsuffix: tag
+  resource-auto-check: true #是否检测文件变化,开发用true合适，但线上要改为false
+
+---
+#本地环境
+spring:
+    profiles: local
+eureka:
+ client:
+   serviceUrl:
+      defaultZone: http://localhost:1111/eureka/   #支持pay-config-eureka

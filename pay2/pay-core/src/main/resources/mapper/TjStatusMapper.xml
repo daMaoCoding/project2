@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.tj.TjStatusMapper">
+  <!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.tj.TjStatus" id="tjStatus">
+        <result property="tjTimeStmp" column="tj_time_stmp"/>
+        <result property="tjName" column="tj_name"/>
+        <result property="tjStatus" column="tj_status"/>
+        <result property="tjIsLocked" column="tj_is_locked"/>
+        <result property="tjLocker" column="tj_locker"/>
+        <result property="timeStmp" column="time_stmp"/>
+        <result property="tjCount" column="tj_by_day_count"/>
+    </resultMap>
+
+
+
+    <!--通过日期，统计名称查询 统计状态-->
+    <select id="getByTjTimeStmp"  resultMap="tjStatus">
+        SELECT  id,tj_time_stmp,tj_name,tj_status,tj_is_locked,tj_locker,time_stmp,tj_count
+        FROM  `tj_status`
+        WHERE tj_time_stmp = #{tj_time_stmp} and tj_name=#{tj_name} LIMIT 1;
+    </select>
+
+
+    <!--通过日期，统计名称查询 统计状态个数-->
+    <select id="getTjStatusByDateAndName" resultType="java.lang.Integer">
+         SELECT COUNT(id)
+         FROM `tj_status`
+         WHERE tj_time_stmp = #{tj_time_stmp} and tj_name=#{tj_name};
+    </select>
+
+
+    <!-- 按天删除 -->
+    <delete id="delStatusByDayBatch">
+        DELETE FROM tj_status where tj_time_stmp=#{tj_time_stmp}  and tj_name='TJ_BY_DAY'
+    </delete>
+
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.daifu.ResDaifuListMapper">
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.daifu.ResDaiFuList" id="resPayResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="amount" column="amount"/>
+        <result property="channel" column="channel"/>
+        <result property="channelMemberId" column="channelMemberId"/>
+        <result property="timeStmp" column="timeStmp"/>
+        <result property="responseDaifuParams" column="reqDaifuInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="responseDaifuResult" column="requestDaifuResult" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="reqDaifuInfo" column="reqDaifuInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="oid" column="oid"/>
+        <result property="resDbCount" column="resDbCount"/>
+        <result property="resDbResult" column="resDbResult"/>
+        <result property="resDbMsg" column="resDbMsg"/>
+        <result property="serverId" column="serverId"/>
+        <result property="reqDaifuTimeStmp" column="reqDaifuTimeStmp"/>
+        <result property="resDaifuRemoteIp" column="resDaifuRemoteIp"/>
+    </resultMap>
+<!--
+    &lt;!&ndash; 查询响应支付金额 &ndash;&gt;
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT CONCAT(sum(CAST(res_pay_list_tmp.amount AS Unsigned))) FROM
+        (SELECT DISTINCT order_id ,amount from  res_pay_list
+        <where>
+            <if test="resPayList.orderId != null and resPayList.orderId  != ''">
+                AND order_id = #{resPayList.orderId}
+            </if>
+            <if test="resPayList.channel != null  and resPayList.channel  != ''">
+                AND channel like CONCAT('%',#{resPayList.channel},'%')
+            </if>
+            <if test="resPayList.channelMemberId != null  and resPayList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{resPayList.channelMemberId},'%')
+            </if>
+            <if test="resPayList.result != null and resPayList.result!= 'ALL'    and resPayList.result  != ''">
+                AND result like CONCAT('%',#{resPayList.result},'%')
+            </if>
+            <if test="resPayList.oid != null  and resPayList.oid != 'ALL' and resPayList.oid  != ''">
+                AND oid =#{resPayList.oid}
+            </if>
+        </where>
+        ) AS res_pay_list_tmp
+
+    </select>
+-->
+
+
+    <!-- 查询响应支付金额 -->
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT sum(CAST(amount AS Unsigned)) FROM  res_pay_list
+        <where>
+            <if test="resDaifuList.orderId != null and resDaifuList.orderId  != ''">
+                AND order_id = #{resDaifuList.orderId}
+            </if>
+            <if test="resDaifuList.channel != null  and resDaifuList.channel  != ''">
+                AND channel like CONCAT('%',#{resDaifuList.channel},'%')
+            </if>
+            <if test="resDaifuList.channelMemberId != null  and resDaifuList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{resDaifuList.channelMemberId},'%')
+            </if>
+            <if test="resDaifuList.result != null and resDaifuList.result != 'ALL'   and resDaifuList.result  != ''">
+                AND result like CONCAT('%',#{resDaifuList.result},'%')
+            </if>
+            <if test="resDaifuList.oid != null  and resDaifuList.oid != 'ALL' and resDaifuList.oid  != ''">
+                AND oid =#{resDaifuList.oid}
+            </if>
+        </where>
+    </select>
+
+    
+
+</mapper>

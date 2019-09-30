@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.daifu.ReqDaifuListMapper">
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.daifu.ReqDaiFuList" id="reqDaifuResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="amount" column="amount"/>
+        <result property="channel" column="channel"/>
+        <result property="channelMemberId" column="channelMemberId"/>
+        <result property="timeStmp" column="timeStmp"/>
+        <result property="oid" column="oid"/>
+        <result property="clientIp" column="clientIp"/>
+        <result property="serverId" column="serverId"/>
+        <result property="notifyUrl" column="notifyUrl"/>
+        <result property="reqDaifuInfo" column="reqDaifuInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="requestDaifuResult" column="requestDaifuResult" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="account" column="account"/>
+        <result property="customerName" column="customerName"/>
+        <result property="bankName" column="bankName"/>
+        <result property="bankBranch" column="bankBranch"/>
+        <result property="bankSubBranch" column="bankSubBranch"/>
+        <result property="bankNumber" column="bankNumber"/>
+        <result property="orderStatus" column="orderStatus"/>
+    </resultMap>
+
+
+
+
+    <!-- 查询请求代付金额 -->
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT sum(CAST(amount AS Unsigned)) FROM  req_daifu_list
+        <where>
+            <if test="reqDaiFuList.orderId != null and reqDaiFuList.orderId  != ''">
+                AND order_id = #{reqDaiFuList.orderId}
+            </if>
+            <if test="reqDaiFuList.channel != null  and reqDaiFuList.channel  != ''">
+                AND channel like CONCAT('%',#{reqDaiFuList.channel},'%')
+            </if>
+            <if test="reqDaiFuList.channelMemberId != null  and reqDaiFuList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{reqDaiFuList.channelMemberId},'%')
+            </if>
+            <if test="reqDaiFuList.result != null and reqDaiFuList.result != 'ALL'   and reqDaiFuList.result  != ''">
+                AND result like CONCAT('%',#{reqDaiFuList.result},'%')
+            </if>
+            <if test="reqDaiFuList.oid != null  and reqDaiFuList.oid != 'ALL' and reqDaiFuList.oid  != ''">
+                AND oid =#{reqDaiFuList.oid}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="getReqDaiFuListByMemberId" resultMap="reqDaifuResult">
+        <![CDATA[
+            SELECT
+                id as id,
+                order_id as orderId,
+                amount as amount,
+                channel as channel,
+                channel_member_id as channelMemberId,
+                time_stmp as timeStmp,
+                oid as oid,
+                client_ip as clientIp,
+                server_id as serverId,
+                 req_daifu_info as reqDaifuInfo,
+                 request_daifu_result as requestDaifuResult,
+                 account as account,
+                 customer_name as customerName,
+                 bank_name as bankName,
+                 bank_branch as bankBranch,
+                 bank_sub_branch as bankSubBranch,
+                 bank_number as bankNumber
+             FROM req_daifu_list WHERE channel_member_id=#{memberId}  and result='SUCCESS'  and order_id NOT REGEXP '^T'  ORDER BY id DESC LIMIT 1 ;
+        ]]>
+
+
+
+    </select>    <select id="getReqDaiFuListByMemberIdIncludeTestOrder" resultMap="reqDaifuResult">
+        <![CDATA[
+            SELECT
+                id as id,
+                order_id as orderId,
+                amount as amount,
+                channel as channel,
+                channel_member_id as channelMemberId,
+                time_stmp as timeStmp,
+                oid as oid,
+                client_ip as clientIp,
+                server_id as serverId,
+                 req_daifu_info as reqDaifuInfo,
+                 request_daifu_result as requestDaifuResult,
+                 account as account,
+                 customer_name as customerName,
+                 bank_name as bankName,
+                 bank_branch as bankBranch,
+                 bank_sub_branch as bankSubBranch,
+                 bank_number as bankNumber
+             FROM req_daifu_list WHERE channel_member_id=#{memberId}  and result='SUCCESS'  and order_status='PAYING'  ORDER BY id DESC LIMIT 1 ;
+        ]]>
+    </select>
+
+
+
+
+
+</mapper>

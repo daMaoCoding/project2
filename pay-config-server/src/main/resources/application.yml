@@ -1,0 +1,37 @@
+spring:
+  profiles:
+    active: local
+
+---
+#本地环境
+server:
+  port: 7777
+spring:
+  profiles: local
+  application:
+    name: pay-config-server
+  cloud:
+    config:
+      enabled: false
+      overrideNone: true
+      discovery.enabled: true
+      server:
+        git:
+          uri: http://172.28.240.38:3000/tony/pay-local-dev.git
+eureka:
+  instance:
+    appname: pay-config-server
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 13
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    healthcheck.enabled: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+    serviceUrl:
+      defaultZone: http://localhost:1111/eureka/
+logging:
+  level:
+    com.netflix.discovery: 'INFO'
+    org.springframework.cloud: 'INFO'

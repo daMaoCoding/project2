@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.pay.ReqpayListMapper">
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.pay.ReqPayList" id="reqPayResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="amount" column="amount"/>
+        <result property="channel" column="channel"/>
+        <result property="channelMemberId" column="channelMemberId"/>
+        <result property="timeStmp" column="timeStmp"/>
+        <result property="oid" column="oid"/>
+        <result property="clientIp" column="clientIp"/>
+        <result property="orderForm" column="orderForm"/>
+        <result property="serverId" column="serverId"/>
+        <result property="restView" column="restView"/>
+        <result property="jumpUrl" column="jumpUrl"/>
+        <result property="webUrl" column="webUrl"/>
+        <result property="notifyUrl" column="notifyUrl"/>
+        <result property="reqPayInfo" column="reqPayInfo" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+        <result property="requestPayResult" column="requestPayResult" typeHandler="dc.pay.utils.mybatis.typeHandler.JsonTypeHandler"/>
+    </resultMap>
+
+
+
+    <select id="getInPaging" resultType="java.util.List">
+        <![CDATA[
+           SELECT
+              number
+           FROM
+              example_table
+           WHERE
+              id=#{id}
+        ]]>
+    </select>
+
+
+    <!-- 查询请求支付金额 -->
+    <select id="getAllAmount" resultType="java.lang.String">
+        SELECT sum(CAST(amount AS Unsigned)) FROM  req_pay_list
+        <where>
+            <if test="reqPayList.orderId != null and reqPayList.orderId  != ''">
+                AND order_id = #{reqPayList.orderId}
+            </if>
+            <if test="reqPayList.channel != null  and reqPayList.channel  != ''">
+                AND channel like CONCAT('%',#{reqPayList.channel},'%')
+            </if>
+            <if test="reqPayList.channelMemberId != null  and reqPayList.channelMemberId  != ''">
+                AND channel_member_id like CONCAT('%',#{reqPayList.channelMemberId},'%')
+            </if>
+            <if test="reqPayList.result != null and reqPayList.result != 'ALL'   and reqPayList.result  != ''">
+                AND result like CONCAT('%',#{reqPayList.result},'%')
+            </if>
+            <if test="reqPayList.oid != null  and reqPayList.oid != 'ALL' and reqPayList.oid  != ''">
+                AND oid =#{reqPayList.oid}
+            </if>
+        </where>
+    </select>
+
+
+
+
+
+
+    <select id="findUserInfoByParams"  >
+        select * from userinfo
+        where gender = #{gender}
+        <if test="position!=null">
+            and position like #{position}
+        </if>
+        <if test="d != null and d.id != null">
+            AND department = #{d.id}
+        </if>
+    </select>
+
+
+
+    <select id="getReqpayListByMemberId" resultMap="reqPayResult">
+        <![CDATA[
+            SELECT
+                id as id,
+                order_id as orderId,
+                amount as amount,
+                channel as channel,
+                channel_member_id as channelMemberId,
+                time_stmp as timeStmp,
+                oid as oid,
+                client_ip as clientIp,
+                order_form as orderForm,
+                server_id as serverId,
+                req_pay_info as reqPayInfo,
+                request_pay_result as requestPayResult
+             FROM req_pay_list WHERE channel_member_id=#{memberId}  and result='SUCCESS'  and order_id NOT REGEXP '^T'  ORDER BY id DESC LIMIT 1 ;
+        ]]>
+    </select>
+
+
+    <update id="updataRestView">
+        <if test="orderId != null and orderId  != ''">
+        <![CDATA[
+           update req_pay_list  set rest_view = rest_view+1 WHERE order_id  = #{orderId}
+        ]]>
+        </if>
+    </update>
+
+
+
+</mapper>

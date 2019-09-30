@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: local
+
+encrypt:
+  failOnError: false
+
+management:
+  info:
+    git:
+      mode: full
+
+---
+spring:
+    profiles: local
+logging:
+   path: C:/logs
+   logFileLeve: INFO
+   level.org.springframework.web: INFO
+---
+spring:
+    profiles: dev
+logging:
+   path: /opt/logs
+   logFileLeve: INFO
+   level.org.springframework.web: INFO

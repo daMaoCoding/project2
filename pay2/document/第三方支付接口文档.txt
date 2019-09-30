@@ -1,0 +1,258 @@
+更新时间： 20:41 2017/7/7
+@author： tony
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+1.web主动调用支付系统（获取请求支付信息）
+   请求地址：http://支付服务器/reqPay/{订单号}
+   方法：POST
+   请求内容格式：application/json; charset=UTF-8
+   请求内容：任意JSON,如{"ip":"123.123.123.123"}
+   返回内容格式：applicgit ation/json; charset=UTF-8
+   返回内容体：
+※※※※※※※※※※※※※※※※
+  2017.12.12:  增加返回字段：requestDaifuOtherParam,此字段是db传入的，原封返回
+※※※※※※※※※※※※※※※※
+
+{
+    "requestPayCode": "SUCCESS",  //总处理结果，SUCCESS处理成功，ERROR处理失败
+    "requestPayQRcodeURL": "", //二维码图片地址
+    "requestPayQRcodeContent": "", //二维码内容，如weixin://slkdf
+    "requestPayHtmlContent": "",//HTML内容
+    "requestPayJumpToUrl": "http://localhost:8081/wy/jmp/I387351880181762-FAq5m", //跳转地址
+    "requestPayErrorMsg": "", //详细错误消息，如果上面总处理结果为ERROR,此项才有内容(不要暴露详细错误信息到客户浏览器)
+    "requestPayamount": "1", //请求支付金额，单位：分
+    "requestPayOrderId": "I387351880181762-FAq5m",  //订单号
+    "requestPayOrderCreateTime": "2017-12-12 23:41:04", //订单时间
+    "requestPayChannelBankName": "LUDEZHIFU_BANK_WEB_WY_JSYH", //订单支付通道(全局统一命名)
+    "requestDaifuOtherParam": "this is other param",        //自定义参数，此参数来自db获取支付订单时，db传入，原封返回。
+    "requestPayTotalTime": "14", //处理时间
+    "requestPayChannelTime": "0", //通道处理耗时
+    "requestPayGetReqpayinfoTime": "9", //获取db支付信息耗时
+    "detail": [  //处理详细信息(由于第三方支付厂商不同，详细结果各不相同,日志记录排错使用)
+        {
+            "HtmlContext": "<form id='sForm' userBankName='sForm' action='http://gate.dgldymy.com/cooperate/gateway.cgi' method='get'><input type='hidden' userBankName='amount' value='0.01'/><input type='hidden' userBankName='bankId' value='CCB'/><input type='hidden' userBankName='clientIp' value='222.41.113.157'/><input type='hidden' userBankName='expireTime' value=''/><input type='hidden' userBankName='extra' value='PAY'/><input type='hidden' userBankName='merId' value='2017052444010020'/><input type='hidden' userBankName='notifyUrl' value='http://45.76.13.45:8080/respPayWeb/LUDEZHIFU_BANK_WEB_WY_JSYH/'/><input type='hidden' userBankName='service' value='TRADE.B2C'/><input type='hidden' userBankName='sign' value='5220DC7B17E1A5D22F06BF60F44628B9'/><input type='hidden' userBankName='summary' value='PAY'/><input type='hidden' userBankName='tradeDate' value='20171213'/><input type='hidden' userBankName='tradeNo' value='I387351880181762-FAq5m'/><input type='hidden' userBankName='version' value='1.0.0.0'/></form><script>document.forms['sForm'].submit();</script>"
+        }
+    ]
+}
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+1.1 web调用测试支付通道接口
+  请求地址：http://数据库接口服务器/reqPay/testReqPay/       例:http://localhost:8080/reqPay/testReqPay/
+  请求方式: Post
+  请求内容格式：application/json; charset=UTF-8
+  期待请求内容：(具体解释参看下面：[2.支付系统调用数据库接口] )
+{
+    "api_TIME_OUT": "40000",  //超时时间，单位毫秒,必填
+    "api_KEY": "74052E8BFC0******49951875E983A84", //加密后的秘钥，必填
+    "api_PUBLIC_KEY":"",     //公钥，不需加密，当公钥必填，则必传
+    "api_MEMBERID": "2566",    //商户号，必填
+    "api_AMOUNT": "100",      //订单金额，必填
+    "api_ORDER_ID": "I20170628151958591936",  //订单号，必填
+    "api_CHANNEL_BANK_NAME": "LUOBO_BANK_WEBWAPAPP_WX_SM",  //支付通道
+    "api_NOTIFY_URL_PREFIX": "http://45.76.13.45:8080",   //回调通知URL
+    "api_ORDER_STATE": "NEW",   //订单状态  //2018.3.4,发现db更改了值，支付也改为数字，妈的，仁至义尽了。`status` tinyint(1) NOT NULL COMMENT '状态 0待确认1已存入2已取消 3：已锁定',
+    "api_MEMBER_PLATFORMID": "",   //平台号
+    "api_OrDER_TIME": "1499301708000",  //订单时间
+    "api_JUMP_URL_PREFIX":"http://10.20.11.160:8081" ,  //网银的跳转url前缀
+    "api_WEB_URL":"http://www.caipiao.com",  //购彩主页
+	"api_OTHER_PARAM":"this is test pay other param" ,  //其他参数，用于传递到restfull
+    "api_Client_IP":"123.123.123.123",  //充值客户ip
+    "api_OID":"100"   //业主OID
+}
+
+
+  返回内容：application/json; charset=UTF-8
+  返回内容体：(同：[1.web主动调用支付系统（获取请求支付信息）] )
+{
+    "requestPayCode": "SUCCESS",  //总处理结果，SUCCESS处理成功，ERROR处理失败
+    "requestPayQRcodeURL": "", //二维码图片地址
+    "requestPayQRcodeContent": "", //二维码内容，如weixin://slkdf
+    "requestPayHtmlContent": "",//HTML内容
+    "requestPayJumpToUrl": "http://localhost:8081/wy/jmp/I387351880181762-FAq5m", //跳转地址
+    "requestPayErrorMsg": "", //详细错误消息，如果上面总处理结果为ERROR,此项才有内容(不要暴露详细错误信息到客户浏览器)
+    "requestPayamount": "1", //请求支付金额，单位：分
+    "requestPayOrderId": "I387351880181762-FAq5m",  //订单号
+    "requestPayOrderCreateTime": "2017-12-12 23:41:04", //订单时间
+    "requestPayChannelBankName": "LUDEZHIFU_BANK_WEB_WY_JSYH", //订单支付通道(全局统一命名)
+    "requestDaifuOtherParam": "this is other param",        //自定义参数，此参数来自db获取支付订单时，db传入，原封返回。
+    "requestPayTotalTime": "14", //处理时间
+    "requestPayChannelTime": "0", //通道处理耗时
+    "requestPayGetReqpayinfoTime": "9", //获取db支付信息耗时
+    "detail": [  //处理详细信息(由于第三方支付厂商不同，详细结果各不相同,日志记录排错使用)
+        {
+            "HtmlContext": "<form id='sForm' userBankName='sForm' action='http://gate.dgldymy.com/cooperate/gateway.cgi' method='get'><input type='hidden' userBankName='amount' value='0.01'/><input type='hidden' userBankName='bankId' value='CCB'/><input type='hidden' userBankName='clientIp' value='222.41.113.157'/><input type='hidden' userBankName='expireTime' value=''/><input type='hidden' userBankName='extra' value='PAY'/><input type='hidden' userBankName='merId' value='2017052444010020'/><input type='hidden' userBankName='notifyUrl' value='http://45.76.13.45:8080/respPayWeb/LUDEZHIFU_BANK_WEB_WY_JSYH/'/><input type='hidden' userBankName='service' value='TRADE.B2C'/><input type='hidden' userBankName='sign' value='5220DC7B17E1A5D22F06BF60F44628B9'/><input type='hidden' userBankName='summary' value='PAY'/><input type='hidden' userBankName='tradeDate' value='20171213'/><input type='hidden' userBankName='tradeNo' value='I387351880181762-FAq5m'/><input type='hidden' userBankName='version' value='1.0.0.0'/></form><script>document.forms['sForm'].submit();</script>"
+        }
+    ]
+}
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.支付系统调用数据库接口(获取订单及订单支付信息，注意，商户号，商户密钥要匹配)
+ 请求地址：http://数据库接口服务器/****/{orderId}    http://localhost:8080/test/db/getReqPayinfoByOrderId/6789
+ 请求方式: Post
+ 特殊请求头：REQUEST_CLIENT=PAY_SERVER
+ 请求内容格式：application/json; charset=UTF-8
+ 请求内容：任意JSON,如{"ip":"123.123.123.123"}
+ 期望返回内容格式：application/json; charset=UTF-8
+ 期望返回内容体：
+ ※※※※※※※※※※※※※※※※
+  2017.7.4：  期望数据库返回字段增加：api_MEMBER_PLATFORMID, 因为：佰付宝要求,官方叫法“平台号|商户(合作伙伴)ID”，注意不同于商户号(api_MEMBERID),再注意，再第三方支付平台使用上看值的内容和商户号一样，但不排除以后不一样。
+  2017.10.5:  期望数据库返回字段增加：api_PUBLIC_KEY,W付需要提供一对公钥私钥，公钥存入官方，对请求支付无影响，对回调有影响。ALTER TABLE `bill` ADD COLUMN `API_PUBLIC_KEY`  text NULL AFTER `API_MEMBER_PLATFORMID`;
+  2017.10.6:  增加自动重试通道，此接口继续正常使用。
+  2017.12.12: 期望数据库返回字段增加：API_JUMP_URL_PREFIX,API_WEB_URL,API_OTHER_PARAM
+                                  ALTER TABLE `bill` ADD COLUMN `API_JUMP_URL_PREFIX`  text NULL AFTER `API_PUBLIC_KEY`;
+                                  ALTER TABLE `bill` ADD COLUMN `API_WEB_URL`  text NULL AFTER `API_PUBLIC_KEY`;
+                                  ALTER TABLE `bill` ADD COLUMN `API_OTHER_PARAM`  text NULL AFTER `API_PUBLIC_KEY`;
+  2017.12.25：期望数据库返回字段增加：API_Client_IP,API_OID
+                                ALTER TABLE `bill` ADD COLUMN `API_Client_IP`  text NULL AFTER `API_PUBLIC_KEY`;
+                                ALTER TABLE `bill` ADD COLUMN `API_OID`  text NULL AFTER `API_Client_IP`;
+
+ 2018.1.18： 期望数据库返回字段增加：API_ORDER_FROM  （目前支持：3 APP-Android，4 APP-IOS，5 APP-Other，6 WEB，7 Windows，8 Mac,9 WAP）
+                                 ALTER TABLE `bill` ADD COLUMN `API_ORDER_FROM`  text NULL AFTER `API_Client_IP`;
+ ※※※※※※※※※※※※※※※※
+
+ 如：迅宝QQ扫码支付：XUNBAO_BANK_QQ_QB
+ {
+    "api_MEMBERID": "1275",							 	  //商户号
+    "api_KEY": "318E01DA495A***********5FF958CBF2492",//商户密钥
+    "api_MEMBER_PLATFORMID":"※※※※※※※※※※※※※※※※"(在迅宝中可为空，在佰付宝中如果为空，则默认会使用api_MEMBERID值代替)
+    "api_TIME_OUT": "5500",         	                  //超时，0为不限制,单位毫秒
+    "api_ORDER_ID": "6789_1496218585369",           	 //订单号
+    "api_AMOUNT": "200",							 	//支付金额,单位分
+    "api_NOTIFY_URL_PREFIX": "http://45.76.13.45:8080", //回掉通知域名(同WEB短部署地址，回调通知会发到此地址)
+    "api_ORDER_STATE": "NEW",                          //订单状态（.,.,.,.SUCCESS.,.,.,.），支付系统只会判断订单是否为SUCCESS,SUCCESS表示已经支付成功（）
+                                                       //发现db更改了值，支付也改为数字，妈的，仁至义尽了。`status` tinyint(1) NOT NULL COMMENT '状态 0待确认1已存入2已取消 3：已锁定',
+
+    "api_OrDER_TIME": "1530007938000",                 //订单时间
+    "api_CHANNEL_BANK_NAME": "XUNBAO_BANK_QQ_QB"，      //订单支付通道(全局统一命名)
+     "api_OTHER_PARAM":"",     //restFull自定义参数
+     "api_JUMP_URL_PREFIX":""  //网银的跳转url ,2018.3.16[增加必填]
+     "api_WEB_URL":"",         //投注购彩网址
+     "api_Client_IP":"123.123.123.123",  //充值客户ip
+     "api_OID":"100",   //业主OID
+     "api_ORDER_FROM":"1"   //请求来源（用于客户自动跳转web Or wap 版网银）
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3.支付系统调用数据库接口(通知数据库会员充值已成功)
+请求地址：http://数据库接口服务器/****/    http://localhost:8080/test/db/DBreceive/
+请求内容格式：application/json; charset=UTF-8
+请求方式: Post
+请求体：
+
+※※※※※※※※※※※※※※※※
+2017.12.12:通知数据库接口增加返回字段：responsePayOtherParam ,来自db查询订单信息的自定义参数
+2018.1.9:通知数据库接口增加返回字段sign,oid
+
+※※※※※※以下为最新版※※※※※※※※※※
+{
+    "responsePayOid": "100",                                 //2018.1.9新增，业主订单OID
+    "responsePaySign": "8E99C0D608B514A7E4E00F94EF9B3572",  //2018.1.9新增，签名结果，规则在下方
+    "responseOrderID": "YIFU_WEBWAPAPP_WX_SM-2ipX2",        //订单号  （有用）
+    "responseOrderState": "SUCCESS",                        //订单充值验证成功 （有用）
+    "responsePayAmount": "1",                              //金额单位分
+    "responsePayChannel": "EBOOPAY_BANK_WX_SM",            //全局支付通道
+    "responseDaifuCode": "SUCCESS",                        //总处理结果，SUCCESS处理成功，ERROR处理失败（有用）
+    "responsePayMemberId": "33728",                    //商户号
+    "responsePayMsg": "success",                      //返回第三方支付商信息 (暂时无用)
+    "responsePayTotalTime": 14                       //处理时间   (暂时无用)
+    "responsePayErrorMsg": "",                      //总处理结果，失败消息
+    "responsePayOtherParam":"oid=80"                //新增加------------------->来自db自定义参数
+}
+
+签名字符串：(key 为商户秘钥)
+responseOrderID=YIFU_WEBWAPAPP_WX_SM-2ipX2&responseOrderState=SUCCESS&responsePayAmount=200&responsePayChannel=YIFU_BANK_WEBWAPAPP_WX_SM&responseDaifuCode=SUCCESS&responsePayOid=100&key=ZxRW17qtyJ1509102337hkPOlX1ZPr8
+MD5签名结果(大写)
+CEB5E78FDC324ED960A48B93C3ADB124
+
+数据库返回 {"result":"1","msg":"成功"}   / {"result":"0","msg":"失败"}
+
+===========================================批量通道自动重试，暂未使用===================================================
+2.1.0 支付系统调用数据库接口(获取订单及订单支付信息，注意，商户号，商户密钥要匹配)【自动重试,批量请求支付】--批量
+ 请求地址：http://数据库接口服务器/****/{orderId}    http://localhost:8080/test/db/getReqPayinfoByOrderId/6789
+ 请求方式: Post & Get
+ 特殊请求头：REQUEST_CLIENT=PAY_SERVER
+ 期望返回内容格式：application/json; charset=UTF-8
+ 期望返回内容体：
+     "reqPayInfoList": [
+         {
+             "aPI_AMOUNT": "11",
+             "aPI_CHANNEL_BANK_NAME": "CAIFUBAO_BANK_WEBWAPAPP_WX_SM",
+             "aPI_KEY": "289C3438F776E2E968E4D67C4C464D5111EB3157E8046243898C73DBB2138FD0E624645915EADF070B894AF3C319A13B85247816EA826FCA2964C46F9619BF43C35F5391C6AF1A0B980DB7D464F03767E50EEEC0D190597C9EE70DB04E174E7439B9E5833E0A3FDF4ECA943CFF17B5D8548813D6CF659B2EDC3546BFD6A41F1D",
+             "aPI_MEMBERID": "1121ce19-c377-40df-a0b0-27775a763719",
+             "aPI_MEMBER_PLATFORMID": "",
+             "aPI_NOTIFY_URL_PREFIX": "http://45.76.13.45:8080",
+             "aPI_ORDER_ID": "CAIFUBAO_WX_SM-l0lUe-RQv56",
+             "aPI_ORDER_STATE": "NEW", //发现db更改了值，支付也改为数字，妈的，仁至义尽了。`status` tinyint(1) NOT NULL COMMENT '状态 0待确认1已存入2已取消 3：已锁定',
+             "aPI_OrDER_TIME": "1506512045000",
+             "aPI_SEQUENCE_NUMBER": "8",     //重试顺序,接受整数
+             "aPI_TIME_OUT": "100"           //通道超时时间,毫秒。
+         },
+         {
+             "aPI_AMOUNT": "200",
+             "aPI_CHANNEL_BANK_NAME": "CAIHONG_BANK_WEBWAPAPP_WX_SM",
+             "aPI_KEY": "9399A43B93909B43434FE4596C4C518138F3BCBCAFFB20F68C12573A8D0FAE3FCC334356EF305F57C7C154917934FC368064A4F5657A6525803F6835D3E945980915BC50CC896FECC8785B14328BDE0C2718DEBC9A41BC1CB931941FC51BEE20813D20FC7CFBE9D2BE5FFC062C120F4166E4758765C8BEB9073516C5172BE39F",
+             "aPI_MEMBERID": "3632",
+             "aPI_MEMBER_PLATFORMID": "",
+             "aPI_NOTIFY_URL_PREFIX": "http://45.76.13.45:8080",
+             "aPI_ORDER_ID": "CAIHONG_WX_SM-ncR2Q-teklx",
+             "aPI_ORDER_STATE": "NEW",//发现db更改了值，支付也改为数字，妈的，仁至义尽了。`status` tinyint(1) NOT NULL COMMENT '状态 0待确认1已存入2已取消 3：已锁定',
+             "aPI_OrDER_TIME": "1506564919000",
+             "aPI_SEQUENCE_NUMBER": "2",
+             "aPI_TIME_OUT": "100"
+         },
+
+     ],
+     "timeOut": "30000"    //总超时时间,毫秒。
+ }
+
+
+ 2.1.1  RestFull主动调用支付系统（获取请求支付信息）(批量请求支付/自动重试)
+  除了调用接口地址不同，其他与之前接口一致，升级后两接口都可提供服务
+  之前地址：http://支付服务器/reqPay/订单号
+  现在地址：http://支付服务器/reqPay/batch/订单号
+========================================================================================================================
+
+通知rest充值结果：需求1367
+/crk/toCrk
+请求方式：POST
+
+{
+    "REQUEST_CLIENT":"PAY_SERVER"
+    "Content-Type":"application/json"
+}
+
+
+请求参数：
+{
+  "oid": 99, //
+  "orderNo": "" // 订单号
+}
+返回参数：
+{
+    "code": 200, // 成功200，失败其他值
+	"msg": null, // 回调处理时的错误信息
+	"data": 1 // 成功返回1
+}
+
+
+
+
+========================================================================================================================
+
+
+
+
+
+
+其他约束
+1.在web端配置的：接收第三方回调相关（payProps.forweb.payServUrl）
+   @Value("${payProps.forweb.payServUrl}")
+   private static final String PAYSERVURL = "http://localhost:8080";  //支付系统响应URL
+
+2.已接入第三方通道配置：（约定的全局唯一通道名称，例如：EBOOPAY_BANK_ZFB_SM 代表 易宝支付-支付宝扫码 / EBOOPAY_BANK_WX_SM  代表 易宝支付-微信扫码）
+    详情见Excel:通道配置.xls  或
+    http://localhost:8080/channelConfig

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.runtime.StartInfoMapper">
+  <!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap type="dc.pay.entity.runtime.StartInfo" id="startInfoResult">
+        <result property="id" column="id"/>
+        <result property="serverID" column="serverID"/>
+        <result property="profiles" column="profiles"/>
+        <result property="appname" column="appname"/>
+        <result property="ipAddress" column="ipAddress"/>
+        <result property="port" column="port"/>
+        <result property="startDateTime" column="startDateTime"/>
+        <result property="dbInfo" column="dbInfo"/>
+        <result property="gitBranch" column="gitBranch"/>
+        <result property="gitCommitId" column="gitCommitId"/>
+        <result property="gitShortCommitId" column="gitShortCommitId"/>
+        <result property="gitCommitTime" column="gitCommitTime"/>
+        <result property="commondLine" column="commondLine"/>
+        <result property="memoryInfo" column="memoryInfo"/>
+    </resultMap>
+
+
+    <select id="getReqPayListMaxCleanIdAndCount" resultType="java.util.Map">
+        <![CDATA[
+           SELECT MAX(id) as maxId,count(id) as countId FROM req_pay_list WHERE time_stmp < #{dateTime}
+         ]]>
+    </select>
+    <delete id="cleanReqPayList">
+        <![CDATA[
+           DELETE FROM req_pay_list WHERE id<=#{maxId};
+         ]]>
+    </delete>
+
+
+
+    <select id="getResPayListMaxCleanIdAndCount" resultType="java.util.Map">
+        <![CDATA[
+           SELECT MAX(id) as maxId,count(id) as countId FROM res_pay_list WHERE time_stmp < #{dateTime}
+         ]]>
+    </select>
+    <delete id="cleanResPayList">
+        <![CDATA[
+           DELETE FROM res_pay_list WHERE id<=#{maxId};
+         ]]>
+    </delete>
+
+
+
+
+    <select id="getReqDaifuListMaxCleanIdAndCount" resultType="java.util.Map">
+        <![CDATA[
+           SELECT MAX(id) as maxId,count(id) as countId FROM req_daifu_list WHERE time_stmp < #{dateTime}
+         ]]>
+    </select>
+    <delete id="cleanReqDaifuList">
+        <![CDATA[
+           DELETE FROM req_daifu_list WHERE id<=#{maxId};
+         ]]>
+    </delete>
+
+
+
+    <select id="getResDaifuListMaxCleanIdAndCount" resultType="java.util.Map">
+        <![CDATA[
+           SELECT MAX(id) as maxId,count(id) as countId FROM res_daifu_list WHERE time_stmp < #{dateTime}
+         ]]>
+    </select>
+    <delete id="cleanResDaifuList">
+        <![CDATA[
+           DELETE FROM res_daifu_list WHERE id<=#{maxId};
+         ]]>
+    </delete>
+
+
+    <delete id="cleanStartInfo">
+    <![CDATA[
+        delete From start_info where DATE(startDateTime) <= DATE(DATE_SUB(NOW(),INTERVAL 7 day));
+        ]]>
+    </delete>
+    <delete id="cleanTjStatus">
+    <![CDATA[
+        delete From tj_status where DATE(time_stmp) <= DATE(#{dateTime});
+        ]]>
+    </delete>
+    <delete id="cleanTjByDay">
+    <![CDATA[
+      delete From tj_by_day where DATE(time_stmp) <= DATE(#{dateTime});
+        ]]>
+    </delete>
+
+
+</mapper>

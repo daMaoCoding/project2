@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dc.pay.mapper.tj.TongJiMapper">
+    <!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap type="dc.pay.entity.tj.TongJi" id="tongJi">
+        <result property="reqSum" column="reqSum"/>
+        <result property="reqAmount" column="reqAmount"/>
+        <result property="reqResult" column="reqResult"/>
+        <result property="reqChannel" column="reqChannel"/>
+        <result property="resSum" column="resSum"/>
+        <result property="resAmount" column="resAmount"/>
+        <result property="resResult" column="resResult"/>
+        <result property="resChannel" column="resChannel"/>
+        <result property="reqTimeStmp" column="reqTimeStmp"/>
+        <result property="resTimeStmp" column="resTimeStmp"/>
+        <result property="reqOid" column="reqOid"/>
+        <result property="reqMemberID" column="reqMemberID"/>
+    </resultMap>
+
+
+    <resultMap type="dc.pay.entity.tj.BillVerify" id="billVerify">
+        <result  property="oid" column="oid"/>
+        <result  property="orderAmount" column="orderAmount"/>
+        <result  property="orderCount" column="orderCount"/>
+    </resultMap>
+
+
+    <resultMap type="dc.pay.entity.pay.PayApiUrl" id="payApiUrl">
+        <result  property="oid" column="oid"/>
+        <result  property="web_url" column="web_url"/>
+        <result  property="jump_url" column="jump_url"/>
+        <result  property="notify_url" column="notify_url"/>
+    </resultMap>
+
+
+
+    <!--成功率(全部通道,微信,支付宝,QQ,百度,京东,网银) -->
+    <select id="getAllCgl" resultMap="tongJi">
+           SELECT
+                reqList.*, resList.*
+            FROM
+                (
+                    SELECT
+                        count(*) AS reqSum,
+                        sum(amount) AS reqAmount,
+                        result AS reqResult,
+                        channel AS reqChannel
+                    FROM
+                        `req_pay_list`
+                WHERE  req_pay_list.time_stmp between #{startDateTime} and #{endDateTime} and req_pay_list.order_id NOT REGEXP '^T' AND req_pay_list.channel is not null
+                 <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                   AND req_pay_list.oid =#{tongJiSearchCondition.oid}
+                 </if>
+                    GROUP BY
+                        result,
+                        channel
+
+                )as reqList
+            left  JOIN
+            (
+            SELECT sum(a.resSum) as resSum, sum(a.resAmount) as resAmount, resResult,resChannel from (
+                SELECT DISTINCT order_id, count(DISTINCT order_id) AS resSum, amount  AS resAmount, result AS resResult, channel AS resChannel
+                    FROM
+                        `res_pay_list`
+                    WHERE res_pay_list.req_pay_time_stmp BETWEEN #{startDateTime} AND #{endDateTime} AND res_pay_list.order_id NOT REGEXP '^T'
+                    <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                        AND res_pay_list.oid =#{tongJiSearchCondition.oid}
+                    </if>
+                    GROUP BY result,channel,order_id,amount
+                )as a
+            GROUP BY resResult,resChannel
+            ) as resList ON (resList.resChannel=reqList.reqChannel and resList.resResult=reqList.reqResult)
+            ORDER BY reqList.reqChannel
+    </select>
+
+
+
+
+    <!--成功率 in tj_by_day(全部通道,微信,支付宝,QQ,百度,京东,网银) -->
+    <select id="getAllCglInTjByDay" resultMap="tongJi">
+        SELECT * FROM
+        (
+            SELECT
+                sum(reqSum) AS reqSum,sum(reqAmount) AS reqAmount,reqResult,channel AS reqChannel
+            FROM
+                tj_by_day
+            <where>
+                <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                   AND  oid =#{tongJiSearchCondition.oid}
+                </if>
+                   AND tj_time_stmp BETWEEN #{startDateTime} AND #{endDateTime}
+            </where>
+            GROUP BY reqResult, channel
+        )AS req
+        LEFT JOIN
+        (
+            SELECT sum(resSum) AS resSum, sum(resAmount) AS resAmount, resResult, channel AS resChannel
+            FROM
+                tj_by_day
+            <where>
+                resResult IS NOT NULL
+                <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                    AND  oid =#{tongJiSearchCondition.oid}
+                </if>
+                    AND tj_time_stmp BETWEEN #{startDateTime} AND #{endDateTime}
+            </where>
+            GROUP BY resResult, channel
+        )AS res
+        ON req.reqResult = res.resResult AND req.reqChannel = res.resChannel
+    </select>
+
+
+
+
+
+
+    <!--成功率,通道，OID,MemberID(全部通道,微信,支付宝,QQ,百度,京东,网银) -->
+    <select id="getAllCglFordbChannelSort" resultMap="tongJi">
+        SELECT
+            reqList.*, resList.*
+        FROM
+        (
+          SELECT count(*) AS reqSum, sum(amount) AS reqAmount,  result AS reqResult, channel AS reqChannel,oid AS reqOid,channel_member_id as reqMemberID
+          FROM
+           `req_pay_list`
+          WHERE  req_pay_list.time_stmp between #{startDateTime} and #{endDateTime} and req_pay_list.order_id NOT REGEXP '^T' AND req_pay_list.channel is not null
+        <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+            AND req_pay_list.oid =#{tongJiSearchCondition.oid}
+        </if>
+        GROUP BY
+        result,
+        channel,
+        oid,
+        channel_member_id
+
+        )as reqList
+        left  JOIN
+        (
+        SELECT sum(a.resSum) as resSum, sum(a.resAmount) as resAmount, resResult,resChannel,resOid,resMemberID from (
+        SELECT DISTINCT order_id, count(DISTINCT order_id) AS resSum, amount  AS resAmount, result AS resResult, channel AS resChannel,oid AS resOid,channel_member_id as resMemberID
+        FROM
+        `res_pay_list`
+        WHERE res_pay_list.req_pay_time_stmp BETWEEN #{startDateTime} AND #{endDateTime} AND res_pay_list.order_id NOT REGEXP '^T'
+        <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+            AND res_pay_list.oid =#{tongJiSearchCondition.oid}
+        </if>
+        GROUP BY result,channel,order_id,amount,oid, channel_member_id
+        )as a
+        GROUP BY resResult,resChannel,resOid, resMemberID
+        ) as resList ON (resList.resChannel=reqList.reqChannel and resList.resResult=reqList.reqResult AND resList.resOid = reqList.reqOid AND resList.resMemberID = reqList.reqMemberID)
+        ORDER BY reqList.reqOid desc, reqList.reqMemberID asc,reqList.reqChannel
+    </select>
+
+
+
+
+    <!--成功率,通道，OID(全部通道,微信,支付宝,QQ,百度,京东,网银) -->
+    <select id="getAllCglByDay" resultMap="tongJi">
+        SELECT
+        reqList.*, resList.*
+        FROM
+        (
+        SELECT count(*) AS reqSum, sum(amount) AS reqAmount,  result AS reqResult, channel AS reqChannel,oid AS reqOid
+        FROM
+        `req_pay_list`
+        WHERE  req_pay_list.time_stmp between #{startDateTime} and #{endDateTime} and req_pay_list.order_id NOT REGEXP '^T' AND req_pay_list.channel is not null
+        GROUP BY
+        result,
+        channel,
+        oid
+        )as reqList
+        left  JOIN
+        (
+        SELECT sum(a.resSum) as resSum, sum(a.resAmount) as resAmount, resResult,resChannel,resOid from (
+        SELECT DISTINCT order_id, count(DISTINCT order_id) AS resSum, amount  AS resAmount, result AS resResult, channel AS resChannel,oid AS resOid
+        FROM
+        `res_pay_list`
+        WHERE res_pay_list.req_pay_time_stmp BETWEEN #{startDateTime} AND #{endDateTime} AND res_pay_list.order_id NOT REGEXP '^T'
+        GROUP BY result,channel,order_id,amount,oid
+        )as a
+        GROUP BY resResult,resChannel,resOid
+        ) as resList ON (resList.resChannel=reqList.reqChannel and resList.resResult=reqList.reqResult AND resList.resOid = reqList.reqOid)
+        ORDER BY reqList.reqOid,reqList.reqChannel,reqList.reqResult
+    </select>
+
+
+    <!-- 按天统计插入 -->
+    <insert id="insertAllCglByDayBatch" useGeneratedKeys="true"  >
+        insert into tj_by_day (oid,reqSum,reqAmount,reqResult,channel,resSum,resAmount,resResult,tj_time_stmp) values
+        <foreach collection="tongJis" item="item" index="index" separator="," >
+            (#{item.reqOid},#{item.reqSum},#{item.reqAmount},#{item.reqResult}  ,#{item.reqChannel},#{item.resSum},#{item.resAmount},#{item.resResult},#{tj_time_stmp})
+        </foreach>
+    </insert>
+
+    <!-- 按天删除 -->
+    <delete id="delAllCglByDayBatch">
+      DELETE FROM tj_by_day where tj_time_stmp=#{tj_time_stmp}
+    </delete>
+
+
+    <select id="getCglCountbyDay" resultType="java.lang.Integer">
+        SELECT COUNT(id) from `tj_by_day`  where tj_by_day.tj_time_stmp = #{tj_time_stmp};
+    </select>
+
+
+
+
+
+
+
+
+
+
+    <!--成功率(具体通道)  '%Y%m%d%H' '%Y%m%d'-->
+    <select id="getAllCglByChannel" resultMap="tongJi">
+            SELECT
+                reqList.*, resList.*
+            FROM
+                (
+                    SELECT
+                        count(*) AS reqSum,
+                        sum(amount) AS reqAmount,
+                        result AS reqResult,
+                        channel AS reqChannel,
+                        DATE_FORMAT(time_stmp, #{timeStmpStr}) reqTimeStmp
+                    FROM
+                        `req_pay_list`
+                    WHERE
+                        req_pay_list.time_stmp BETWEEN #{startDateTime} and #{endDateTime}
+                    AND req_pay_list.order_id NOT REGEXP '^T' AND req_pay_list.channel is not null
+                    AND req_pay_list.channel = #{channelName}
+                    <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                       AND req_pay_list.oid =#{tongJiSearchCondition.oid}
+                    </if>
+                    GROUP BY
+                        result,
+                        channel,
+                        reqTimeStmp
+                ) AS reqList
+            LEFT JOIN (
+                     SELECT
+                        sum(a.resSum) AS resSum, sum(a.resAmount) AS resAmount, resTimeStmp,  resChannel
+                    FROM
+                        (
+                            SELECT DISTINCT
+                                order_id, count(DISTINCT order_id) AS resSum, amount AS resAmount, DATE_FORMAT(time_stmp,#{timeStmpStr}) resTimeStmp, channel AS resChannel
+                            FROM
+                                `res_pay_list`
+                            WHERE
+                                res_pay_list.result = 'SUCCESS'
+                            AND res_pay_list.req_pay_time_stmp BETWEEN #{startDateTime}  AND  #{endDateTime}
+                            AND res_pay_list.order_id NOT REGEXP '^T'
+                            AND res_pay_list.channel = #{channelName}
+                            <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                                AND res_pay_list.oid =#{tongJiSearchCondition.oid}
+                            </if>
+                            GROUP BY
+                                resTimeStmp,
+                                order_id,
+                                amount
+                        ) AS a
+                    GROUP BY
+                        resTimeStmp
+            ) AS resList ON (
+                resList.resTimeStmp = reqList.reqTimeStmp
+            )
+            ORDER BY
+                reqList.reqTimeStmp
+    </select>
+
+
+    <!--成功率(具体通道)-图表-全部通道(增加支付商筛选)  '%Y%m%d%H' '%Y%m%d'-->
+    <select id="getAllCglByAllChannel" resultType="dc.pay.entity.tj.TongJi">
+        SELECT
+            sum(b.reqSum) AS reqSum,
+            sum(b.reqAmount) AS reqAmount,
+            b.reqResult AS reqResult,
+            b.reqTimeStmp AS reqTimeStmp,
+            sum(b.resSum) AS resSum,
+            sum(b.resAmount) AS resAmount
+        FROM
+            (
+                SELECT
+                    reqList.*, resList.*
+                FROM
+
+                    (
+                        SELECT
+                            count(*) AS reqSum,
+                            sum(amount) AS reqAmount,
+                            result AS reqResult,
+                            channel AS reqChannel,
+                            DATE_FORMAT(${time_stmp_col_name}, #{timeStmpStr}) reqTimeStmp
+                        FROM
+                            `req_pay_list`
+                        WHERE
+                            req_pay_list.time_stmp BETWEEN #{startDateTime} and #{endDateTime}
+                        AND req_pay_list.order_id NOT REGEXP '^T' AND req_pay_list.channel is not null
+                        <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                            AND req_pay_list.oid =#{tongJiSearchCondition.oid}
+                        </if>
+                        <if test="tongJiSearchCondition.tongJiType != null  and tongJiSearchCondition.tongJiType != 'ALL' and tongJiSearchCondition.tongJiType  != ''">
+                            AND req_pay_list.channel  like   CONCAT('%',#{tongJiSearchCondition.tongJiType},'%')
+                        </if>
+                        GROUP BY
+                            result,
+                            channel,
+                            reqTimeStmp
+                    ) AS reqList
+                LEFT JOIN (
+                    SELECT
+                        sum(a.resSum) AS resSum,
+                        sum(a.resAmount) AS resAmount,
+                        resTimeStmp,
+                        resChannel
+                    FROM
+                        (
+                            SELECT DISTINCT
+                                order_id,
+                                count(DISTINCT order_id) AS resSum,
+                                amount AS resAmount,
+                                DATE_FORMAT(${time_stmp_col_name},  #{timeStmpStr}) resTimeStmp,
+                                channel AS resChannel
+                            FROM
+                                `res_pay_list`
+                            WHERE
+                                res_pay_list.result = 'SUCCESS'
+                            AND res_pay_list.req_pay_time_stmp BETWEEN #{startDateTime} and #{endDateTime}
+                            AND res_pay_list.order_id NOT REGEXP '^T' AND res_pay_list.channel is not null
+                            <if test="tongJiSearchCondition.oid != null  and tongJiSearchCondition.oid != 'ALL' and tongJiSearchCondition.oid  != ''">
+                                AND res_pay_list.oid =#{tongJiSearchCondition.oid}
+                            </if>
+                            <if test="tongJiSearchCondition.tongJiType != null  and tongJiSearchCondition.tongJiType != 'ALL' and tongJiSearchCondition.tongJiType  != ''">
+                                AND res_pay_list.channel  like  CONCAT('%',#{tongJiSearchCondition.tongJiType},'%')
+                            </if>
+                            GROUP BY
+                                resTimeStmp,
+                                order_id,
+                                amount,
+                                resChannel
+                        ) AS a
+                    GROUP BY
+                        resTimeStmp,
+                        resChannel
+                ) AS resList ON (
+                    resList.resTimeStmp = reqList.reqTimeStmp and
+                  reqList.reqChannel=resList.resChannel and
+                    reqList.reqResult='SUCCESS'
+                )
+                ORDER BY
+                    reqList.reqTimeStmp
+            ) AS b
+        GROUP BY
+            reqResult,
+            reqTimeStmp
+        ORDER BY
+            reqTimeStmp
+    </select>
+
+
+
+    <select id="getOidCount" resultType="java.lang.Integer">
+       SELECT count(DISTINCT(oid)) as oidCount
+       FROM `res_pay_list`
+       WHERE   res_pay_list.order_id NOT REGEXP '^T'
+    </select>
+
+
+    <!-- 核对入款数据 -->
+    <select id="billVerify" resultMap="billVerify">
+     <![CDATA[
+                SELECT count( BB.order_id ) AS orderCount, sum( BB.resAmount ) AS orderAmount, 	BB.oid AS oid
+                FROM
+                    (
+                SELECT DISTINCT
+                    order_id,
+                    amount AS resAmount,
+                    oid AS oid,
+                    count( DISTINCT order_id ) AS resSum
+                FROM
+                    res_pay_list
+                WHERE
+                    res_db_result = 'SUCCESS'  AND res_pay_list.time_stmp BETWEEN #{startDateTime}  AND  #{endDateTime}
+                GROUP BY
+                    order_id,
+                    amount,
+                    oid
+                    ) AS BB
+                GROUP BY
+                    oid;
+            ]]>
+    </select>
+
+
+    <!-- 检查今日url正确性 -->
+    <select id="payApiUrl" resultMap="payApiUrl">
+     <![CDATA[
+            SELECT a.*,b.*,c.*
+            FROM
+                ( SELECT DISTINCT web_url AS web_url, oid FROM req_pay_list WHERE web_url IS NOT NULL AND DATE_FORMAT( time_stmp, '%Y-%m-%d' ) = CURDATE( ) ) AS a
+                JOIN ( SELECT DISTINCT jump_url AS jump_url, oid FROM req_pay_list WHERE jump_url IS NOT NULL AND DATE_FORMAT( time_stmp, '%Y-%m-%d' ) = CURDATE( ) ) AS b
+                JOIN ( SELECT DISTINCT notify_url AS notify_url, oid FROM req_pay_list WHERE notify_url IS NOT NULL AND DATE_FORMAT( time_stmp, '%Y-%m-%d' ) = CURDATE( ) ) AS c
+            WHERE
+                a.oid = b.oid
+                AND b.oid = c.oid;
+      ]]>
+    </select>
+
+
+
+</mapper>
