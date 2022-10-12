@@ -31,7 +31,7 @@
         <start-class>Main</start-class>
         <docker.image.prefix>pay</docker.image.prefix>
         <it.skip>false</it.skip>
-        <shiro.version>1.4.0</shiro.version>
+        <shiro.version>1.10.0</shiro.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <velocity.version>1.7</velocity.version>
         <beetl.version>2.7.27</beetl.version>
